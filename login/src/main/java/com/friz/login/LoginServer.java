@@ -18,12 +18,17 @@
 package com.friz.login;
 
 import com.friz.network.NetworkServer;
+import com.friz.network.SessionContext;
+import com.friz.network.com.friz.network.event.EventHub;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
 
@@ -32,10 +37,15 @@ import java.net.InetSocketAddress;
  */
 public class LoginServer extends NetworkServer {
 
+    private final EventHub hub = new EventHub();
+    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("login-attribute-key");
+
     @Override
     public void initialize() {
         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         bootstrap = new ServerBootstrap();
+
+        LoginServer s = this;
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
@@ -44,7 +54,9 @@ public class LoginServer extends NetworkServer {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
-
+                        ChannelPipeline p = ch.pipeline();
+                        p.addLast(IdleStateHandler.class.getName(), new IdleStateHandler(15, 0, 0));
+                        p.addLast(LoginChannelHandler.class.getName(), new LoginChannelHandler(s));
                     }
 
                 })
@@ -69,4 +81,13 @@ public class LoginServer extends NetworkServer {
             e.printStackTrace();
         }
     }
+
+    public EventHub getHub() {
+        return hub;
+    }
+
+    public AttributeKey<SessionContext> getAttr() {
+        return attr;
+    }
+
 }
