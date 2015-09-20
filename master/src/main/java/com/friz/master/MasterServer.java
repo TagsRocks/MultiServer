@@ -18,37 +18,57 @@
 
 package com.friz.master;
 
+import com.friz.audio.AudioServer;
+import com.friz.cache.Cache;
+import com.friz.cache.FileStore;
 import com.friz.game.GameServer;
 import com.friz.login.LoginServer;
+import com.friz.network.Constants;
 import com.friz.update.UpdateServer;
+
+import java.io.IOException;
 
 /**
  * Created by Kyle Fricilone on 9/8/2015.
  */
 public class MasterServer {
 
-    public static void main(String[] args) {
-        UpdateServer u = new UpdateServer();
-        u.initialize();
-        u.bind();
-        System.out.println("UpdateServer initialized on: " + u.getAddress());
+    public static void main(String[] args) throws Exception {
+        Cache c = new Cache(FileStore.open(Constants.CACHE_LOCATION));
+        System.out.println("Cache Initialized " + c.getTypeCount() + " Index(es)");
+
+        UpdateServer u = new UpdateServer(c);
+      //  u.initialize();
+      //  u.bind();
+      //  System.out.println("UpdateServer initialized on: " + u.getAddress());
+
+        AudioServer a = new AudioServer(c);
+        a.initialize();
+        a.bind();
+        System.out.println("AudioServer initialized on: " + a.getAddress());
 
         LoginServer l = new LoginServer();
-        l.initialize();
-        l.bind();
-        System.out.println("LoginServer initialized on: " + l.getAddress());
+      //  l.initialize();
+      //  l.bind();
+      //  System.out.println("LoginServer initialized on: " + l.getAddress());
 
-        GameServer g = new GameServer();
-        g.initialize();
-        g.bind();
-        System.out.println("GameServer initialized on: " + g.getAddress());
+        GameServer g = new GameServer(c);
+      //  g.initialize();
+      //  g.bind();
+      //  System.out.println("GameServer initialized on: " + g.getAddress());
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
             @Override
             public void run() {
                 System.out.println("hook");
+                try {
+                    c.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 u.stop();
+                a.stop();
                 l.stop();
                 g.stop();
             }

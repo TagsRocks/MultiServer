@@ -15,9 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.friz.login;
+package com.friz.audio;
 
-import com.friz.login.network.LoginChannelHandler;
+import com.friz.audio.network.AudioChannelHandler;
+import com.friz.audio.network.events.AudioRequestEvent;
+import com.friz.audio.network.listeners.AudioRequestEventListener;
+import com.friz.cache.Cache;
+import com.friz.cache.Container;
+import com.friz.cache.ReferenceTable;
+import com.friz.network.Constants;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.com.friz.network.event.EventHub;
@@ -28,47 +34,72 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
 /**
- * Created by Kyle Fricilone on 9/7/2015.
+ * Created by Kyle Fricilone on 9/17/2015.
  */
-public class LoginServer extends NetworkServer {
+public class AudioServer extends NetworkServer {
 
+    private final Cache cache;
     private final EventHub hub = new EventHub();
-    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("login-attribute-key");
+    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("audio-attribute-key");
+
+    private ByteBuffer checksum;
+    private ReferenceTable reference;
+
+    public AudioServer(Cache c) {
+        this.cache = c;
+        try {
+            this.checksum = new Container(Container.COMPRESSION_NONE, c.createChecksumTable().encode(true, Constants.ONDEMAND_MODULUS, Constants.ONDEMAND_EXPONENT)).encode();
+            this.reference = ReferenceTable.decode(Container.decode(c.getStore().read(255, 40)).getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void initialize() {
         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         bootstrap = new ServerBootstrap();
 
-        LoginServer s = this;
+        AudioServer s = this;
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
-                //.handler(new LoggingHandler(LogLevel.INFO))
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
-                        p.addLast(IdleStateHandler.class.getName(), new IdleStateHandler(15, 0, 0));
-                        p.addLast(LoginChannelHandler.class.getName(), new LoginChannelHandler(s));
+                        p.addLast(HttpServerCodec.class.getName(), new HttpServerCodec());
+                        p.addLast(HttpObjectAggregator.class.getName(), new HttpObjectAggregator(65536));
+                        p.addLast(ChunkedWriteHandler.class.getName(), new ChunkedWriteHandler());
+                        p.addLast(AudioChannelHandler.class.getName(), new AudioChannelHandler(s));
                     }
 
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
+
+        hub.listen(AudioRequestEvent.class, new AudioRequestEventListener());
     }
 
     @Override
     public void bind() {
         try {
-            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 39999)).sync();
+            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 80)).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -81,6 +112,18 @@ public class LoginServer extends NetworkServer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public final Cache getCache() {
+        return cache;
+    }
+
+    public final ByteBuffer getChecksum() {
+        return checksum;
+    }
+
+    public final ReferenceTable getReference() {
+        return reference;
     }
 
     public EventHub getHub() {

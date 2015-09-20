@@ -16,31 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.login;
+package com.friz.audio.network.events;
 
 import com.friz.network.com.friz.network.event.Event;
-import com.friz.network.com.friz.network.event.EventLink;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.FullHttpRequest;
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/18/2015.
  */
-public class LoginChannelHandler extends SimpleChannelInboundHandler<Event> {
+public class AudioRequestEvent implements Event {
 
-    private final LoginServer server;
+    private final FullHttpRequest request;
 
-    public LoginChannelHandler(LoginServer s) {
-        this.server = s;
+    public AudioRequestEvent(FullHttpRequest r) {
+        this.request = r;
     }
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        ctx.channel().attr(server.getAttr()).set(new LoginSessionContext(ctx.channel(), server));
-    }
-
-    @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
-        server.getHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
+    public FullHttpRequest getRequest() {
+        return request;
     }
 }

@@ -16,18 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.login;
+package com.friz.audio.network;
 
+import com.friz.audio.AudioServer;
 import com.friz.network.SessionContext;
 import io.netty.channel.Channel;
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/18/2015.
  */
-public class LoginSessionContext extends SessionContext<LoginServer> {
+public class AudioSessionContext extends SessionContext<AudioServer> {
 
-
-    public LoginSessionContext(Channel c, LoginServer loginServer) {
-        super(c, loginServer);
+    public AudioSessionContext(Channel c, AudioServer audioServer) {
+        super(c, audioServer);
     }
+
 }

@@ -17,6 +17,7 @@
  */
 package com.friz.game;
 
+import com.friz.cache.Cache;
 import com.friz.network.NetworkServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -31,6 +32,12 @@ import java.net.InetSocketAddress;
  * Created by Kyle Fricilone on 9/7/2015.
  */
 public class GameServer extends NetworkServer {
+
+    private final Cache cache;
+
+    public GameServer(Cache c) {
+        this.cache = c;
+    }
 
     @Override
     public void initialize() {
@@ -68,5 +75,9 @@ public class GameServer extends NetworkServer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public final Cache getCache() {
+        return cache;
     }
 }
