@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network.com.friz.network.event;
+package com.friz.network.event;
 
 import java.util.HashMap;
 import java.util.LinkedList;

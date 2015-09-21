@@ -21,12 +21,15 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.CRC32;
 
 import com.friz.cache.utility.ByteBufferUtils;
 import com.friz.cache.utility.crypto.BKDR;
 import com.friz.cache.ReferenceTable.Entry;
 import com.friz.cache.utility.crypto.Whirlpool;
+import com.friz.network.Constants;
 
 /**
  * The {@link Cache} class provides a unified, high-level API for modifying
@@ -40,7 +43,17 @@ public final class Cache implements Closeable {
 	 * The file store that backs this cache.
 	 */
 	private final FileStore store;
-	
+
+	/**
+	 * The encoded checsum table for this cache
+	 */
+	private ByteBuffer checksum;
+
+	/**
+	 * The list of reference tables for this cache
+	 */
+	private List<ReferenceTable> references;
+
 	/**
 	 * Creates a new {@link Cache} backed by the specified {@link FileStore}.
 	 * @param store The {@link FileStore} that backs this {@link Cache}.
@@ -48,6 +61,29 @@ public final class Cache implements Closeable {
 	 */
 	public Cache(FileStore store) throws IOException {
 		this.store = store;
+	}
+
+	public void initialize() {
+		try {
+			checksum = new Container(Container.COMPRESSION_NONE, createChecksumTable().encode(true, Constants.ONDEMAND_MODULUS, Constants.ONDEMAND_EXPONENT)).encode();
+			references = new ArrayList<>(store.getTypeCount());
+			for (int type = 0; type < store.getTypeCount(); type++) {
+				ByteBuffer buf = store.read(255, type);
+				if (buf != null && buf.limit() > 0) {
+					references.add(ReferenceTable.decode(Container.decode(buf).getData()));
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public final ByteBuffer getChecksum() {
+		return checksum;
+	}
+
+	public final ReferenceTable getReferenceTable(int type) {
+		return references.get(type);
 	}
 
 	public void close() throws IOException {

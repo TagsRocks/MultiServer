@@ -20,7 +20,7 @@ package com.friz.audio.network;
 
 import com.friz.audio.AudioServer;
 import com.friz.audio.network.events.AudioRequestEvent;
-import com.friz.network.com.friz.network.event.EventLink;
+import com.friz.network.event.EventLink;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -29,7 +29,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
  * Created by Kyle Fricilone on 9/18/2015.
  */
 public class AudioChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-
 
     private final AudioServer server;
 
@@ -45,5 +44,10 @@ public class AudioChannelHandler extends SimpleChannelInboundHandler<FullHttpReq
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         server.getHub().onLink(new EventLink(new AudioRequestEvent(msg), ctx.channel().attr(server.getAttr()).get()));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
     }
 }

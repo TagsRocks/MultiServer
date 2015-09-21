@@ -16,35 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network;
+package com.friz.update.network.codec;
 
-import com.friz.network.event.EventContext;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
+
+import java.util.List;
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/20/2015.
  */
-public class SessionContext<S extends NetworkServer> implements EventContext {
+public class XorEncoder extends MessageToByteEncoder<ByteBuf> {
 
-    protected final Channel channel;
-    protected final S server;
+    private int key = 0;
 
-    public SessionContext(Channel c, S s) {
-        this.channel = c;
-        this.server = s;
+    @Override
+    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
+        while (msg.isReadable()) {
+            out.writeByte(msg.readUnsignedByte() ^ key);
+        }
     }
 
-    public ChannelFuture write(Object o) {
-        return channel.writeAndFlush(o);
+    public void setKey(int k) {
+        this.key = k;
     }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public S getServer() {
-        return server;
-    }
-
 }

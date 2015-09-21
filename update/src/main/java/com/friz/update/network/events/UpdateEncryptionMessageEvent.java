@@ -16,13 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network.com.friz.network.event;
+package com.friz.update.network.events;
+
+
+import com.friz.network.event.Event;
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/20/2015.
  */
-public interface EventListener<E extends Event, C extends  EventContext> {
+public class UpdateEncryptionMessageEvent implements Event {
 
-    void onEvent(E event, C context);
+	/**
+	 * The key
+	 */
+	private final int key;
+	
+	/**
+	 * Creates a new UpdateEncryptionMessage.
+	 * @param key The key.
+	 */
+	public UpdateEncryptionMessageEvent(int key) {
+		this.key = key;
+	}
 
+	/**
+	 * Gets the key.
+	 * @return the key
+	 */
+	public int getKey() {
+		return key;
+	}
 }

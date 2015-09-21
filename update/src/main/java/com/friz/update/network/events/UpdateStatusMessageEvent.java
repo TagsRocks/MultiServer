@@ -16,35 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network;
+package com.friz.update.network.events;
 
-import com.friz.network.event.EventContext;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+
+import com.friz.network.event.Event;
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/20/2015.
  */
-public class SessionContext<S extends NetworkServer> implements EventContext {
+public final class UpdateStatusMessageEvent implements Event {
 
-    protected final Channel channel;
-    protected final S server;
+	public static final int STATUS_OK = 0;
+	public static final int STATUS_OUT_OF_DATE = 6;
+	public static final int STATUS_SERVER_FULL = 7;
 
-    public SessionContext(Channel c, S s) {
-        this.channel = c;
-        this.server = s;
-    }
+	private final int status;
 
-    public ChannelFuture write(Object o) {
-        return channel.writeAndFlush(o);
-    }
+	public UpdateStatusMessageEvent(int status) {
+		this.status = status;
+	}
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public S getServer() {
-        return server;
-    }
+	public int getStatus() {
+		return status;
+	}
 
 }

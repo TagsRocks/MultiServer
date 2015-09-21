@@ -20,7 +20,12 @@ package com.friz.audio.network;
 
 import com.friz.audio.AudioServer;
 import com.friz.network.SessionContext;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.*;
+
+import java.nio.ByteBuffer;
 
 /**
  * Created by Kyle Fricilone on 9/18/2015.
@@ -29,6 +34,15 @@ public class AudioSessionContext extends SessionContext<AudioServer> {
 
     public AudioSessionContext(Channel c, AudioServer audioServer) {
         super(c, audioServer);
+    }
+
+    public void writeResponse(HttpVersion version, ByteBuf container) {
+        HttpResponse response = new DefaultHttpResponse(version, HttpResponseStatus.OK);
+        HttpHeaders.setContentLength(response, container.readableBytes());
+
+        channel.write(response);
+        channel.write(container);
+        channel.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
     }
 
 }

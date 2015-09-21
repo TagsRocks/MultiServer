@@ -18,7 +18,7 @@
 
 package com.friz.audio.network.events;
 
-import com.friz.network.com.friz.network.event.Event;
+import com.friz.network.event.Event;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 /**

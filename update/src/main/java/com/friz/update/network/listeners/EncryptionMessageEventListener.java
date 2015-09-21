@@ -16,35 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network;
+package com.friz.update.network.listeners;
 
-import com.friz.network.event.EventContext;
+import com.friz.network.event.EventListener;
+import com.friz.update.network.UpdateSessionContext;
+import com.friz.update.network.codec.XorEncoder;
+import com.friz.update.network.events.UpdateEncryptionMessageEvent;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+
 
 /**
- * Created by Kyle Fricilone on 9/8/2015.
+ * Created by Kyle Fricilone on 9/20/2015.
  */
-public class SessionContext<S extends NetworkServer> implements EventContext {
+public class EncryptionMessageEventListener implements EventListener<UpdateEncryptionMessageEvent, UpdateSessionContext> {
 
-    protected final Channel channel;
-    protected final S server;
-
-    public SessionContext(Channel c, S s) {
-        this.channel = c;
-        this.server = s;
+    @Override
+    public void onEvent(UpdateEncryptionMessageEvent event, UpdateSessionContext context) {
+        if (context.isHandshakeComplete()) {
+            Channel channel = context.getChannel();
+            XorEncoder encoder = channel.pipeline().get(XorEncoder.class);
+            encoder.setKey(event.getKey());
+        }
     }
-
-    public ChannelFuture write(Object o) {
-        return channel.writeAndFlush(o);
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public S getServer() {
-        return server;
-    }
-
 }

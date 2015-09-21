@@ -16,35 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.network;
-
-import com.friz.network.event.EventContext;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
+package com.friz.network.event;
 
 /**
  * Created by Kyle Fricilone on 9/8/2015.
  */
-public class SessionContext<S extends NetworkServer> implements EventContext {
-
-    protected final Channel channel;
-    protected final S server;
-
-    public SessionContext(Channel c, S s) {
-        this.channel = c;
-        this.server = s;
-    }
-
-    public ChannelFuture write(Object o) {
-        return channel.writeAndFlush(o);
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public S getServer() {
-        return server;
-    }
-
+public interface Event {
 }

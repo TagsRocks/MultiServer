@@ -19,8 +19,8 @@
 package com.friz.login.network;
 
 import com.friz.login.LoginServer;
-import com.friz.network.com.friz.network.event.Event;
-import com.friz.network.com.friz.network.event.EventLink;
+import com.friz.network.event.Event;
+import com.friz.network.event.EventLink;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

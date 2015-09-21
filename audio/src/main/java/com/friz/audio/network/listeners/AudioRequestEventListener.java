@@ -20,7 +20,7 @@ package com.friz.audio.network.listeners;
 
 import com.friz.audio.network.AudioSessionContext;
 import com.friz.audio.network.events.AudioRequestEvent;
-import com.friz.network.com.friz.network.event.EventListener;
+import com.friz.network.event.EventListener;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -35,7 +35,7 @@ public class AudioRequestEventListener implements EventListener<AudioRequestEven
     @Override
     public void onEvent(AudioRequestEvent event, AudioSessionContext context) {
         int type = -1, file = -1, crc = -1, version = -1;
-        System.out.println(event.getRequest().getUri());
+
         QueryStringDecoder query = new QueryStringDecoder(event.getRequest().getUri());
         for (String key : query.parameters().keySet()) {
             if (key.equals("a"))
@@ -47,13 +47,16 @@ public class AudioRequestEventListener implements EventListener<AudioRequestEven
             else if (key.equals("v"))
                 version = Integer.valueOf(query.parameters().get(key).get(0));
         }
-        ByteBuf container = null;
+
+        ByteBuf container = Unpooled.buffer();
         if (type == 255 && file == 255) {
-            container = Unpooled.wrappedBuffer(context.getServer().getChecksum());
+            container = Unpooled.wrappedBuffer(context.getServer().getCache().getChecksum());
         } else {
-            if (context.getServer().getReference().getEntry(file).getCrc() != crc
-                    || context.getServer().getReference().getEntry(file).getVersion() != version)
+            if (context.getServer().getCache().getReferenceTable(type).getEntry(file).getCrc() != crc
+                    || context.getServer().getCache().getReferenceTable(type).getEntry(file).getVersion() != version) {
+                context.writeResponse(event.getRequest().getProtocolVersion(), container);
                 return;
+            }
 
             try {
                 container = Unpooled.wrappedBuffer(context.getServer().getCache().getStore().read(type, file));
@@ -64,11 +67,6 @@ public class AudioRequestEventListener implements EventListener<AudioRequestEven
             }
         }
 
-        HttpResponse response = new DefaultHttpResponse(event.getRequest().getProtocolVersion(), HttpResponseStatus.OK);
-        HttpHeaders.setContentLength(response, container.readableBytes());
-
-        context.getChannel().write(response);
-        context.getChannel().write(container);
-        context.getChannel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        context.writeResponse(event.getRequest().getProtocolVersion(), container);
     }
 }

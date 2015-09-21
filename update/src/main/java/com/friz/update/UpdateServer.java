@@ -20,8 +20,17 @@ package com.friz.update;
 import com.friz.cache.Cache;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
-import com.friz.network.com.friz.network.event.EventHub;
+import com.friz.network.event.EventHub;
 import com.friz.update.network.UpdateChannelHandler;
+import com.friz.update.network.codec.UpdateDecoder;
+import com.friz.update.network.codec.UpdateEncoder;
+import com.friz.update.network.codec.XorEncoder;
+import com.friz.update.network.events.FileRequestEvent;
+import com.friz.update.network.events.UpdateEncryptionMessageEvent;
+import com.friz.update.network.events.ValidationMessageEvent;
+import com.friz.update.network.listeners.EncryptionMessageEventListener;
+import com.friz.update.network.listeners.FileRequestEventListener;
+import com.friz.update.network.listeners.ValidationEventListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -41,6 +50,7 @@ public class UpdateServer extends NetworkServer {
 
     private final Cache cache;
     private final EventHub hub = new EventHub();
+    private final UpdateService service = new UpdateService();
     private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("update-attribute-key");
 
     public UpdateServer(Cache c) {
@@ -62,6 +72,9 @@ public class UpdateServer extends NetworkServer {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
+                        p.addLast(XorEncoder.class.getName(), new XorEncoder());
+                        p.addLast(UpdateEncoder.class.getName(), new UpdateEncoder());
+                        p.addLast(UpdateDecoder.class.getName(), new UpdateDecoder());
                         p.addLast(IdleStateHandler.class.getName(), new IdleStateHandler(15, 0, 0));
                         p.addLast(UpdateChannelHandler.class.getName(), new UpdateChannelHandler(s));
                     }
@@ -69,6 +82,12 @@ public class UpdateServer extends NetworkServer {
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
+
+        hub.listen(ValidationMessageEvent.class, new ValidationEventListener());
+        hub.listen(UpdateEncryptionMessageEvent.class, new EncryptionMessageEventListener());
+        hub.listen(FileRequestEvent.class, new FileRequestEventListener());
+
+        service.doStart();
     }
 
     @Override
@@ -84,6 +103,7 @@ public class UpdateServer extends NetworkServer {
     public void stop() {
         try {
             future.channel().closeFuture().sync();
+            service.doStop();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -101,4 +121,7 @@ public class UpdateServer extends NetworkServer {
         return attr;
     }
 
+    public UpdateService getService() {
+        return service;
+    }
 }

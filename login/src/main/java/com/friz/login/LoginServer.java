@@ -20,7 +20,7 @@ package com.friz.login;
 import com.friz.login.network.LoginChannelHandler;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
-import com.friz.network.com.friz.network.event.EventHub;
+import com.friz.network.event.EventHub;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;

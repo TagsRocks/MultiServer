@@ -35,12 +35,13 @@ public class MasterServer {
 
     public static void main(String[] args) throws Exception {
         Cache c = new Cache(FileStore.open(Constants.CACHE_LOCATION));
+        c.initialize();
         System.out.println("Cache Initialized " + c.getTypeCount() + " Index(es)");
 
         UpdateServer u = new UpdateServer(c);
-      //  u.initialize();
-      //  u.bind();
-      //  System.out.println("UpdateServer initialized on: " + u.getAddress());
+        u.initialize();
+        u.bind();
+        System.out.println("UpdateServer initialized on: " + u.getAddress());
 
         AudioServer a = new AudioServer(c);
         a.initialize();
