@@ -21,11 +21,16 @@ package com.friz.update.network;
 import com.friz.network.SessionContext;
 import com.friz.update.UpdateServer;
 import com.friz.update.UpdateService;
+import com.friz.update.network.codec.*;
 import com.friz.update.network.events.FileRequestEvent;
 import com.friz.update.network.events.FileResponseEvent;
+import com.friz.update.network.events.UpdateResponseEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelPipeline;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -59,6 +64,29 @@ public class UpdateSessionContext extends SessionContext<UpdateServer> {
     public UpdateSessionContext(Channel c, UpdateServer updateServer) {
         super(c, updateServer);
         this.service = updateServer.getService();
+    }
+
+    public void writeSuccess(int status) {
+        channel.writeAndFlush(new UpdateResponseEvent(status)).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.isSuccess()) {
+                    ChannelPipeline p = future.channel().pipeline();
+                    p.remove(UpdateInitDecoder.class);
+                    p.remove(UpdateInitEncoder.class);
+
+                    p.addFirst(XorEncoder.class.getName(), new XorEncoder());
+                    p.addFirst(UpdateEncoder.class.getName(), new UpdateEncoder());
+                    p.addFirst(UpdateDecoder.class.getName(), new UpdateDecoder());
+
+                    handshakeComplete = true;
+                }
+            }
+        });
+    }
+
+    public void writeFailure(int status) {
+        channel.writeAndFlush(new UpdateResponseEvent(status)).addListener(ChannelFutureListener.CLOSE);
     }
 
     /**

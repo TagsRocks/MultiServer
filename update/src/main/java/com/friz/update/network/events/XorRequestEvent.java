@@ -24,54 +24,26 @@ import com.friz.network.event.Event;
 /**
  * Created by Kyle Fricilone on 9/20/2015.
  */
-public final class ValidationMessageEvent implements Event {
+public class XorRequestEvent implements Event {
 
 	/**
-	 * The version of the client
+	 * The key
 	 */
-	private final int version;
+	private final int key;
 	
 	/**
-	 * The sub version of the client
+	 * Creates a new UpdateEncryptionMessage.
+	 * @param key The key.
 	 */
-	private final int subVersion;
-	
-	/**
-	 * The validation key from the web parameter.
-	 */
-	private final String validationKey;
-
-	/**
-	 * Creates a new UpdateValidationMessage.
-	 * @param version The version of the client.
-	 */
-	public ValidationMessageEvent(int version, int subVersion, String validationKey) {
-		this.version = version;
-		this.subVersion = subVersion;
-		this.validationKey = validationKey;
+	public XorRequestEvent(int key) {
+		this.key = key;
 	}
 
 	/**
-	 * Gets the sub version.
-	 * @return the subVersion.
+	 * Gets the key.
+	 * @return the key
 	 */
-	public int getSubVersion() {
-		return subVersion;
-	}
-
-	/**
-	 * Gets the validation key.
-	 * @return the validationKey.
-	 */
-	public String getValidationKey() {
-		return validationKey;
-	}
-
-	/**
-	 * Gets the version of the client.
-	 * @return The version.
-	 */
-	public int getVersion() {
-		return version;
+	public int getKey() {
+		return key;
 	}
 }

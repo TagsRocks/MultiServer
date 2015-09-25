@@ -18,10 +18,13 @@
 package com.friz.game;
 
 import com.friz.cache.Cache;
+import com.friz.game.network.codec.LoginInitDecoder;
+import com.friz.game.network.codec.LoginInitEncoder;
 import com.friz.network.NetworkServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -51,7 +54,9 @@ public class GameServer extends NetworkServer {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
-
+                        ChannelPipeline p = ch.pipeline();
+                        p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
+                        p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
                     }
 
                 })

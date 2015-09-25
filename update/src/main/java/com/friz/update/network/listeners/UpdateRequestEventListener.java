@@ -20,35 +20,21 @@ package com.friz.update.network.listeners;
 
 import com.friz.network.event.EventListener;
 import com.friz.update.network.UpdateSessionContext;
-import com.friz.update.network.events.UpdateStatusMessageEvent;
-import com.friz.update.network.events.ValidationMessageEvent;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import com.friz.update.network.events.UpdateResponseEvent;
+import com.friz.update.network.events.UpdateRequestEvent;
 
 
 /**
  * Created by Kyle Fricilone on 9/20/2015.
  */
-public final class ValidationEventListener implements EventListener<ValidationMessageEvent, UpdateSessionContext> {
+public final class UpdateRequestEventListener implements EventListener<UpdateRequestEvent, UpdateSessionContext> {
 
 	@Override
-	public void onEvent(ValidationMessageEvent version, UpdateSessionContext context) {
-
-        int status;
-
+	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
 		if (version.getVersion() == 855) {
-			status = UpdateStatusMessageEvent.STATUS_OK;
+			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
 		} else {
-			status = UpdateStatusMessageEvent.STATUS_OUT_OF_DATE;
-		}
-
-		Channel channel = context.getChannel();
-		ChannelFuture future = channel.writeAndFlush(new UpdateStatusMessageEvent(status));
-		if (status == UpdateStatusMessageEvent.STATUS_OK) {
-			context.setHandshakeComplete(true);
-		} else {
-			future.addListener(ChannelFutureListener.CLOSE);
+			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);
 		}
 	}
 

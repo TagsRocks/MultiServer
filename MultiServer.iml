@@ -33,6 +33,10 @@
       <sourceFolder url="file://$MODULE_DIR$/audio/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/audio/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/audio/src/test/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/cache/src/main/resources/cache" />

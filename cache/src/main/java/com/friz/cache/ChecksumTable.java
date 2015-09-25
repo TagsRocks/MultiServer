@@ -92,7 +92,7 @@ public class ChecksumTable {
 		/* calculate the whirlpool digest we expect to have at the end */
 		byte[] masterDigest = null;
 		if (whirlpool) {
-			byte[] temp = new byte[size * 72 + 1];
+			byte[] temp = new byte[size * 80 + 1];
 			buffer.position(0);
 			buffer.get(temp);
 			masterDigest = Whirlpool.whirlpool(temp, 0, temp.length);

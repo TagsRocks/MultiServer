@@ -16,26 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.listeners;
+package com.friz.lobby.network.codec;
 
-import com.friz.network.event.EventListener;
-import com.friz.update.network.UpdateSessionContext;
-import com.friz.update.network.codec.XorEncoder;
-import com.friz.update.network.events.UpdateEncryptionMessageEvent;
-import io.netty.channel.Channel;
-
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/22/2015.
  */
-public class EncryptionMessageEventListener implements EventListener<UpdateEncryptionMessageEvent, UpdateSessionContext> {
+public class LoginEncoder extends MessageToByteEncoder<Object> {
 
     @Override
-    public void onEvent(UpdateEncryptionMessageEvent event, UpdateSessionContext context) {
-        if (context.isHandshakeComplete()) {
-            Channel channel = context.getChannel();
-            XorEncoder encoder = channel.pipeline().get(XorEncoder.class);
-            encoder.setKey(event.getKey());
-        }
+    protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
+        out.writeByte(2);
     }
 }

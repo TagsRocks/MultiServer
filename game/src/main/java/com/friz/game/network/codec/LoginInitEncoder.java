@@ -16,28 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.events;
+package com.friz.game.network.codec;
 
-
-import com.friz.network.event.Event;
+import com.friz.game.network.events.LoginInitResponseEvent;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/22/2015.
  */
-public final class UpdateStatusMessageEvent implements Event {
+public class LoginInitEncoder extends MessageToByteEncoder<LoginInitResponseEvent> {
 
-	public static final int STATUS_OK = 0;
-	public static final int STATUS_OUT_OF_DATE = 6;
-	public static final int STATUS_SERVER_FULL = 7;
-
-	private final int status;
-
-	public UpdateStatusMessageEvent(int status) {
-		this.status = status;
-	}
-
-	public int getStatus() {
-		return status;
-	}
-
+    @Override
+    protected void encode(ChannelHandlerContext ctx, LoginInitResponseEvent msg, ByteBuf buf) throws Exception {
+        buf.writeByte(msg.getStatus());
+    }
 }

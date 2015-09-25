@@ -117,9 +117,10 @@ public final class Cache implements Closeable {
 				crc = ByteBufferUtils.getCrcChecksum(buf);
 				version = ref.getVersion();
 				files = ref.capacity();
-				archiveSize = 0;
+				archiveSize = ref.getArchiveSize();
 				buf.position(0);
 				whirlpool = ByteBufferUtils.getWhirlpoolDigest(buf);
+				System.out.println(i + ", " + version);
 			}
 
 			table.setEntry(i, new ChecksumTable.Entry(crc, version, files, archiveSize, whirlpool));

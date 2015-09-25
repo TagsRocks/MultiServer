@@ -18,8 +18,8 @@
 
 package com.friz.update.network.codec;
 
-import com.friz.update.network.events.FileRequestEvent;
-import com.friz.update.network.events.XorRequestEvent;
+import com.friz.network.utility.BufferUtils;
+import com.friz.update.network.events.UpdateRequestEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -27,26 +27,23 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/24/2015.
  */
-public final class UpdateDecoder extends ByteToMessageDecoder {
+public class UpdateInitDecoder extends ByteToMessageDecoder {
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-        if (buffer.readableBytes() < 6)
-			return;
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        int type = buf.readUnsignedByte();
+        int size = buf.readUnsignedByte();
 
-		int opcode = buffer.readUnsignedByte();
-		if (opcode == 0 || opcode == 1) {
-			int type = buffer.readUnsignedByte();
-			int file = buffer.readInt();
-			out.add(new FileRequestEvent(opcode == 1, type, file));
-		} else if (opcode == 4) {
-			int key = buffer.readUnsignedByte();
-			buffer.readerIndex(buffer.readerIndex() + 4);
-			out.add(new XorRequestEvent(key));
-		} else {
-			buffer.readerIndex(buffer.readerIndex() + 5);
-		}
-	}
+        if (buf.readableBytes() < size)
+            return;
+
+        int version = buf.readInt();
+        int subVersion = buf.readInt();
+        String key = BufferUtils.readString(buf);
+        int langId = buf.readUnsignedByte();
+        out.add(new UpdateRequestEvent(type, version, subVersion, key, langId));
+    }
+
 }

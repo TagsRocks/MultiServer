@@ -22,15 +22,13 @@ import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
 import com.friz.update.network.UpdateChannelHandler;
-import com.friz.update.network.codec.UpdateDecoder;
-import com.friz.update.network.codec.UpdateEncoder;
-import com.friz.update.network.codec.XorEncoder;
+import com.friz.update.network.codec.*;
 import com.friz.update.network.events.FileRequestEvent;
-import com.friz.update.network.events.UpdateEncryptionMessageEvent;
-import com.friz.update.network.events.ValidationMessageEvent;
-import com.friz.update.network.listeners.EncryptionMessageEventListener;
+import com.friz.update.network.events.XorRequestEvent;
+import com.friz.update.network.events.UpdateRequestEvent;
+import com.friz.update.network.listeners.XorRequestEventListener;
 import com.friz.update.network.listeners.FileRequestEventListener;
-import com.friz.update.network.listeners.ValidationEventListener;
+import com.friz.update.network.listeners.UpdateRequestEventListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -38,6 +36,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
 
@@ -66,15 +66,14 @@ public class UpdateServer extends NetworkServer {
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
-                //.handler(new LoggingHandler(LogLevel.INFO))
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
-                        p.addLast(XorEncoder.class.getName(), new XorEncoder());
-                        p.addLast(UpdateEncoder.class.getName(), new UpdateEncoder());
-                        p.addLast(UpdateDecoder.class.getName(), new UpdateDecoder());
+                        p.addLast(UpdateInitEncoder.class.getName(), new UpdateInitEncoder());
+                        p.addLast(UpdateInitDecoder.class.getName(), new UpdateInitDecoder());
                         p.addLast(IdleStateHandler.class.getName(), new IdleStateHandler(15, 0, 0));
                         p.addLast(UpdateChannelHandler.class.getName(), new UpdateChannelHandler(s));
                     }
@@ -83,8 +82,8 @@ public class UpdateServer extends NetworkServer {
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
 
-        hub.listen(ValidationMessageEvent.class, new ValidationEventListener());
-        hub.listen(UpdateEncryptionMessageEvent.class, new EncryptionMessageEventListener());
+        hub.listen(UpdateRequestEvent.class, new UpdateRequestEventListener());
+        hub.listen(XorRequestEvent.class, new XorRequestEventListener());
         hub.listen(FileRequestEvent.class, new FileRequestEventListener());
 
         service.doStart();

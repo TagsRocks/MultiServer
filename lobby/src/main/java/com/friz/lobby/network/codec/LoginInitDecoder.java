@@ -16,10 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.codec;
+package com.friz.lobby.network.codec;
 
-import com.friz.update.network.events.FileRequestEvent;
-import com.friz.update.network.events.XorRequestEvent;
+import com.friz.lobby.network.events.LoginInitRequestEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -27,26 +26,12 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/22/2015.
  */
-public final class UpdateDecoder extends ByteToMessageDecoder {
+public class LoginInitDecoder extends ByteToMessageDecoder {
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-        if (buffer.readableBytes() < 6)
-			return;
-
-		int opcode = buffer.readUnsignedByte();
-		if (opcode == 0 || opcode == 1) {
-			int type = buffer.readUnsignedByte();
-			int file = buffer.readInt();
-			out.add(new FileRequestEvent(opcode == 1, type, file));
-		} else if (opcode == 4) {
-			int key = buffer.readUnsignedByte();
-			buffer.readerIndex(buffer.readerIndex() + 4);
-			out.add(new XorRequestEvent(key));
-		} else {
-			buffer.readerIndex(buffer.readerIndex() + 5);
-		}
-	}
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        out.add(new LoginInitRequestEvent(buf.readUnsignedByte()));
+    }
 }

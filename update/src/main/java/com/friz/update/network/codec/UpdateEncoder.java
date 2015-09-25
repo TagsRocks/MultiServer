@@ -20,7 +20,6 @@ package com.friz.update.network.codec;
 
 import com.friz.cache.Sector;
 import com.friz.update.network.events.FileResponseEvent;
-import com.friz.update.network.events.UpdateStatusMessageEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -28,7 +27,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 /**
  * Created by Kyle Fricilone on 9/20/2015.
  */
-public final class UpdateEncoder extends MessageToByteEncoder<Object> {
+public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent> {
 
 	
 	/**
@@ -40,55 +39,39 @@ public final class UpdateEncoder extends MessageToByteEncoder<Object> {
 	 * The remaining bytes after the block.
 	 */
 	private static int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
-	
-	/**
-	 * Data sent for the 27 integers.
-	 */
-	public static final int[] UPDATE_DATA = { 2617, 69795, 41651, 35866, 358716, 44375, 18189, 29557, 151882, 1033023, 379571, 513743, 724913, 1038833, 31503, 720956, 18773, 1244, 49640, 2060, 119, 1253096, 3798365, 8991, 22279 };
-
 
     @Override
-	protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf buffer) throws Exception {
-		if (msg instanceof FileResponseEvent) {
-			FileResponseEvent response = (FileResponseEvent) msg;
-			ByteBuf container = response.getContainer();
-			int compression = container.readUnsignedByte();
-			int type = response.getType();
-			int file = response.getFile();
+	protected void encode(ChannelHandlerContext ctx, FileResponseEvent msg, ByteBuf buffer) throws Exception {
+		ByteBuf container = msg.getContainer();
+		int compression = container.readUnsignedByte();
+		int type = msg.getType();
+		int file = msg.getFile();
 
-			if (!response.isPriority())
-				file |= 0x80000000;
+		if (!msg.isPriority())
+			file |= 0x80000000;
 			
+		buffer.writeByte(type);
+		buffer.writeInt(file);
+		buffer.writeByte(compression);
+			
+		int bytes = container.readableBytes();
+		if (bytes > BYTES_REMAINING_AFTER_HEADER)
+			bytes = BYTES_REMAINING_AFTER_HEADER;
+
+		buffer.writeBytes(container.readBytes(bytes));
+
+		for (;;) {
+			bytes = container.readableBytes();
+			if (bytes == 0)
+				break;
+			else if (bytes > BYTES_REMAINING_AFTER_BLOCK)
+				bytes = BYTES_REMAINING_AFTER_BLOCK;
+
 			buffer.writeByte(type);
 			buffer.writeInt(file);
-			buffer.writeByte(compression);
-			
-			int bytes = container.readableBytes();
-			if (bytes > BYTES_REMAINING_AFTER_HEADER)
-				bytes = BYTES_REMAINING_AFTER_HEADER;
-
 			buffer.writeBytes(container.readBytes(bytes));
-
-			for (;;) {
-				bytes = container.readableBytes();
-				if (bytes == 0)
-					break;
-				else if (bytes > BYTES_REMAINING_AFTER_BLOCK)
-					bytes = BYTES_REMAINING_AFTER_BLOCK;
-
-				buffer.writeByte(type);
-				buffer.writeInt(file);
-				buffer.writeBytes(container.readBytes(bytes));
-			}
-		} else if (msg instanceof UpdateStatusMessageEvent) {
-            UpdateStatusMessageEvent status = (UpdateStatusMessageEvent) msg;
-            buffer.writeByte(status.getStatus());
-            for (int i = 0; i < UPDATE_DATA.length; i++) {
-                buffer.writeInt(UPDATE_DATA[i]);
-            }
-        }
+		}
 	}
-	
 	
 }
 

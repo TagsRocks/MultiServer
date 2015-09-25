@@ -364,7 +364,7 @@ public class ReferenceTable {
 			table.entries.get(id).crc = buffer.getInt();
 		}
 		
-		/* unknown flag */
+		/* read another hash if present */
 		if ((table.flags & FLAG_HASH) != 0) {
 			for (int id : ids) {
 				table.entries.get(id).hash = buffer.getInt();
@@ -378,7 +378,7 @@ public class ReferenceTable {
 			}
 		}
 		
-		/* unknown flag */
+		/* read the sizes of the archive */
 		if ((table.flags & FLAG_SIZES) != 0) {
 			for (int id : ids) {
 				table.entries.get(id).compressed = buffer.getInt();
@@ -694,5 +694,16 @@ public class ReferenceTable {
 	 */
 	public int size() {
 		return entries.size();
+	}
+
+	public int getArchiveSize() {
+		long sum = 0;
+		for (int i = 0; i < capacity(); i++) {
+			Entry e = entries.get(i);
+			if (e != null) {
+				sum += e.getUncompressed();
+			}
+		}
+		return (int) sum;
 	}
 }

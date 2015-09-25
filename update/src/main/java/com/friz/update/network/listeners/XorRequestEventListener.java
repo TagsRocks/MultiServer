@@ -16,34 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.events;
+package com.friz.update.network.listeners;
 
+import com.friz.network.event.EventListener;
+import com.friz.update.network.UpdateSessionContext;
+import com.friz.update.network.codec.XorEncoder;
+import com.friz.update.network.events.XorRequestEvent;
+import io.netty.channel.Channel;
 
-import com.friz.network.event.Event;
 
 /**
  * Created by Kyle Fricilone on 9/20/2015.
  */
-public class UpdateEncryptionMessageEvent implements Event {
+public class XorRequestEventListener implements EventListener<XorRequestEvent, UpdateSessionContext> {
 
-	/**
-	 * The key
-	 */
-	private final int key;
-	
-	/**
-	 * Creates a new UpdateEncryptionMessage.
-	 * @param key The key.
-	 */
-	public UpdateEncryptionMessageEvent(int key) {
-		this.key = key;
-	}
-
-	/**
-	 * Gets the key.
-	 * @return the key
-	 */
-	public int getKey() {
-		return key;
-	}
+    @Override
+    public void onEvent(XorRequestEvent event, UpdateSessionContext context) {
+        if (context.isHandshakeComplete()) {
+            Channel channel = context.getChannel();
+            XorEncoder encoder = channel.pipeline().get(XorEncoder.class);
+            encoder.setKey(event.getKey());
+        }
+    }
 }
