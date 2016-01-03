@@ -17,19 +17,19 @@
  */
 package com.friz.cache;
 
+import com.friz.cache.ReferenceTable.Entry;
+import com.friz.cache.utility.ByteBufferUtils;
+import com.friz.cache.utility.crypto.BKDR;
+import com.friz.cache.utility.crypto.Whirlpool;
+import com.friz.network.Constants;
+
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.CRC32;
-
-import com.friz.cache.utility.ByteBufferUtils;
-import com.friz.cache.utility.crypto.BKDR;
-import com.friz.cache.ReferenceTable.Entry;
-import com.friz.cache.utility.crypto.Whirlpool;
-import com.friz.network.Constants;
 
 /**
  * The {@link Cache} class provides a unified, high-level API for modifying
@@ -52,7 +52,7 @@ public final class Cache implements Closeable {
 	/**
 	 * The list of reference tables for this cache
 	 */
-	private List<ReferenceTable> references;
+	private Map<Integer, ReferenceTable> references;
 
 	/**
 	 * Creates a new {@link Cache} backed by the specified {@link FileStore}.
@@ -66,11 +66,11 @@ public final class Cache implements Closeable {
 	public void initialize() {
 		try {
 			checksum = new Container(Container.COMPRESSION_NONE, createChecksumTable().encode(true, Constants.ONDEMAND_MODULUS, Constants.ONDEMAND_EXPONENT)).encode();
-			references = new ArrayList<>(store.getTypeCount());
+			references = new HashMap<>(store.getTypeCount());
 			for (int type = 0; type < store.getTypeCount(); type++) {
 				ByteBuffer buf = store.read(255, type);
 				if (buf != null && buf.limit() > 0) {
-					references.add(ReferenceTable.decode(Container.decode(buf).getData()));
+					references.put(type, ReferenceTable.decode(Container.decode(buf).getData()));
 				}
 			}
 		} catch (IOException e) {
@@ -120,7 +120,6 @@ public final class Cache implements Closeable {
 				archiveSize = ref.getArchiveSize();
 				buf.position(0);
 				whirlpool = ByteBufferUtils.getWhirlpoolDigest(buf);
-				System.out.println(i + ", " + version);
 			}
 
 			table.setEntry(i, new ChecksumTable.Entry(crc, version, files, archiveSize, whirlpool));

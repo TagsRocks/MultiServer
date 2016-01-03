@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update;
+package com.friz.audio;
 
+import com.friz.audio.network.AudioSessionContext;
 import com.friz.update.network.UpdateSessionContext;
 import com.google.common.util.concurrent.AbstractService;
 
@@ -30,20 +31,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by Kyle Fricilone on 9/20/2015.
  */
-public class UpdateService extends AbstractService implements Runnable {
+public class AudioService extends AbstractService implements Runnable {
 
     /**
-     * THe {@link java.util.concurrent.ExecutorService} set with the amount of available processors the computer has.
+     * THe {@link ExecutorService} set with the amount of available processors the computer has.
      */
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
-     * A {@link java.util.concurrent.BlockingDeque} of pending {@link com.friz.update.network.UpdateSessionContext}s.
+     * A {@link BlockingDeque} of pending {@link UpdateSessionContext}s.
      */
-    private final BlockingDeque<UpdateSessionContext> pendingContexts = new LinkedBlockingDeque<>();
+    private final BlockingDeque<AudioSessionContext> pendingContexts = new LinkedBlockingDeque<>();
 
     /**
-     * The {@link java.util.concurrent.atomic.AtomicBoolean} for the running of the service.
+     * The {@link AtomicBoolean} for the running of the service.
      */
     private final AtomicBoolean running = new AtomicBoolean(true);
 
@@ -56,7 +57,7 @@ public class UpdateService extends AbstractService implements Runnable {
     public void run() {
         while(running.get()) {
             try {
-                UpdateSessionContext context = pendingContexts.take();
+                AudioSessionContext context = pendingContexts.take();
                 context.processFileQueue();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -71,10 +72,10 @@ public class UpdateService extends AbstractService implements Runnable {
     }
 
     /**
-     * Adds a {@link com.friz.update.network.UpdateSessionContext} to the {@code pendingContexts}.
-     * @param session THe {@link com.friz.update.network.UpdateSessionContext} to registerLobbyPlayer.
+     * Adds a {@link UpdateSessionContext} to the {@code pendingContexts}.
+     * @param session THe {@link UpdateSessionContext} to registerLobbyPlayer.
      */
-    public void addUpdateContext(UpdateSessionContext session) {
+    public void addAudioContext(AudioSessionContext session) {
         pendingContexts.add(session);
     }
 }

@@ -42,7 +42,7 @@ import java.util.Deque;
 public class UpdateSessionContext extends SessionContext<UpdateServer> {
 
     /**
-     * THe {@link java.util.Deque} of {@link com.friz.update.network.events.FileRequestEvent}s.
+     * The {@link java.util.Deque} of {@link com.friz.update.network.events.FileRequestEvent}s.
      */
     private final Deque<FileRequestEvent> fileQueue = new ArrayDeque<>();
 
@@ -100,7 +100,7 @@ public class UpdateSessionContext extends SessionContext<UpdateServer> {
             if (fileQueue.isEmpty()) {
                 idle = true;
             } else {
-                service.addOnDemandContext(this);
+                service.addUpdateContext(this);
                 idle = false;
             }
         }
@@ -167,7 +167,7 @@ public class UpdateSessionContext extends SessionContext<UpdateServer> {
      * Adds this {@link com.friz.update.network.UpdateSessionContext} to the {@link com.friz.update.UpdateService}.
      */
     public void addContextToService() {
-        service.addOnDemandContext(this);
+        service.addUpdateContext(this);
     }
 
 }

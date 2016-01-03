@@ -76,10 +76,10 @@ public final class BufferUtils {
 	 * @param buf The buffer.
 	 * @param value The value.
 	 */
-	public static void putTriByte(ByteBuf buf, int value) {
-		buf.writeByte(value >> 16);
-		buf.writeByte(value >> 8);
-		buf.writeByte(value);
+	public static void putTriByte(ByteBuffer buf, int value) {
+		buf.put((byte) (value >> 16));
+		buf.put((byte) (value >> 8));
+		buf.put((byte) value);
 	}
 	
 	/**
@@ -87,21 +87,21 @@ public final class BufferUtils {
 	 * @param buf The bytebuffer.
 	 * @return The decoded string.
 	 */
-	public static String readString(ByteBuffer buf) {
+	public static String getString(ByteBuffer buf) {
 		StringBuilder bldr = new StringBuilder();
 		byte b;
-		while((b = buf.get()) != 0) {
+		while(buf.hasRemaining() && (b = buf.get()) != 0) {
 			bldr.append((char) b);
 		}
 		return bldr.toString();
 	}
-	
-	/**
-	 * Reads a RuneScape string from a buffer.
-	 * @param buf The buffer.
-	 * @return The string.
-	 */
-	public static String readString(ByteBuf buf) {
+
+    /**
+     * Reads a string from a bytebuf.
+     * @param buf The bytebuf.
+     * @return The decoded string.
+     */
+	public static String getString(ByteBuf buf) {
 		StringBuilder bldr = new StringBuilder();
 		byte b;
 		while(buf.isReadable() && (b = buf.readByte()) != 0) {
@@ -109,6 +109,60 @@ public final class BufferUtils {
 		}
 		return bldr.toString();
 	}
+
+    /**
+     * Reads a string from a bytebuf.
+     * @param buf The bytebuf.
+     * @return The decoded string.
+     */
+    public static String getBase37(ByteBuffer buf) {
+        long value = buf.getLong();
+
+        char[] chars = new char[12];
+        int pos = 0;
+        while (value != 0) {
+            int remainder = (int) (value % 37);
+            value /= 37;
+
+            char c;
+            if (remainder >= 1 && remainder <= 26)
+                c = (char) ('a' + remainder - 1);
+            else if (remainder >= 27 && remainder <= 36)
+                c = (char) ('0' + remainder - 27);
+            else
+                c = '_';
+
+            chars[chars.length - pos++ - 1] = c;
+        }
+        return new String(chars, chars.length - pos, pos);
+    }
+
+    /**
+     * Reads a string from a bytebuf.
+     * @param buf The bytebuf.
+     * @return The decoded string.
+     */
+    public static String getBase37(ByteBuf buf) {
+        long value = buf.readLong();
+
+        char[] chars = new char[12];
+        int pos = 0;
+        while (value != 0) {
+            int remainder = (int) (value % 37);
+            value /= 37;
+
+            char c;
+            if (remainder >= 1 && remainder <= 26)
+                c = (char) ('a' + remainder - 1);
+            else if (remainder >= 27 && remainder <= 36)
+                c = (char) ('0' + remainder - 27);
+            else
+                c = '_';
+
+            chars[chars.length - pos++ - 1] = c;
+        }
+        return new String(chars, chars.length - pos, pos);
+    }
 
     /**
      * Adds a int into a buffer.
@@ -135,26 +189,26 @@ public final class BufferUtils {
 
     /**
      * Encodes a {@link String} with CESU8.
+     * @param buf  The {@link ByteBuf} to put the encoded string.
      * @param string The {@link String} to encode.
-     * @return The encoded {@link String} in a {@link ByteBuf}.
      */
-    public static ByteBuf encodeCESU8(String string) {
+    public static void putCESU8(ByteBuf buf, String string) {
         int length = string.length();
 
         // Calculate the amount of bytes for the buffer.
-        int size = 0;
+        int bytes = 0;
         for (int index = 0; index < length; index++) {
             int character = string.charAt(index);
             if (character >= 2048)
-                size += 3;
+                bytes += 3;
             else if (character >= 128)
-                size += 2;
+                bytes += 2;
             else
-                size++;
+                bytes++;
         }
 
         // Allocate a new buffer for appending data.
-        ByteBuf buffer = Unpooled.buffer(size);
+        ByteBuffer buffer = ByteBuffer.allocate(bytes);
 
         for (int index = 0; index < length; index++) {
             // Get the character at the current index.
@@ -165,20 +219,23 @@ public final class BufferUtils {
 
                 // A character that is represented by 3 bytes.
                 if (character >= 2048) {
-                    buffer.writeByte((character >> 0xC) | 0xE0);
-                    buffer.writeByte(((character >> 6) & 0x3F) | 0x80);
-                    buffer.writeByte((character & 0x3F) | 0x80);
+                    buffer.put((byte) ((character >> 0xC) | 0xE0));
+                    buffer.put((byte) (((character >> 0x6) & 0x3F) | 0x80));
+                    buffer.put((byte) ((character & 0x3F) | 0x80));
 
                     // A character that is represented by 2 bytes.
                 } else {
-                    buffer.writeByte((character >> 6) | 0x3015);
-                    buffer.writeByte((character & 0x3F) | 0x80);
+                    buffer.put((byte) ((character >> 0x6) | 0x3015));
+                    buffer.put((byte) ((character & 0x3F) | 0x80));
                 }
             } else {
                 // A character in which is represented by a single byte.
-                buffer.writeByte(character);
+                buffer.put((byte) character);
             }
         }
-        return buffer;
+
+        buffer.flip();
+
+        buf.writeBytes(buffer);
     }
 }

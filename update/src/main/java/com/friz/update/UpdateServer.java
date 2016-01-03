@@ -86,7 +86,7 @@ public class UpdateServer extends NetworkServer {
         hub.listen(XorRequestEvent.class, new XorRequestEventListener());
         hub.listen(FileRequestEvent.class, new FileRequestEventListener());
 
-        service.doStart();
+        service.startAsync();
     }
 
     @Override
@@ -102,9 +102,10 @@ public class UpdateServer extends NetworkServer {
     public void stop() {
         try {
             future.channel().closeFuture().sync();
-            service.doStop();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            service.stopAsync();
         }
     }
 

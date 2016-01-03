@@ -47,6 +47,7 @@ public class AudioServer extends NetworkServer {
 
     private final Cache cache;
     private final EventHub hub = new EventHub();
+    private final AudioService service = new AudioService();
     private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("audio-attribute-key");
 
     public AudioServer(Cache c) {
@@ -79,6 +80,8 @@ public class AudioServer extends NetworkServer {
                 .childOption(ChannelOption.TCP_NODELAY, true);
 
         hub.listen(AudioRequestEvent.class, new AudioRequestEventListener());
+
+        service.startAsync();
     }
 
     @Override
@@ -96,6 +99,8 @@ public class AudioServer extends NetworkServer {
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            service.stopAsync();
         }
     }
 
@@ -111,4 +116,7 @@ public class AudioServer extends NetworkServer {
         return attr;
     }
 
+    public AudioService getService() {
+        return service;
+    }
 }

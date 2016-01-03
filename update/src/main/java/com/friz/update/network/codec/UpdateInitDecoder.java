@@ -41,7 +41,7 @@ public class UpdateInitDecoder extends ByteToMessageDecoder {
 
         int version = buf.readInt();
         int subVersion = buf.readInt();
-        String key = BufferUtils.readString(buf);
+        String key = BufferUtils.getString(buf);
         int langId = buf.readUnsignedByte();
         out.add(new UpdateRequestEvent(type, version, subVersion, key, langId));
     }

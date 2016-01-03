@@ -20,12 +20,14 @@ package com.friz.audio.network.listeners;
 
 import com.friz.audio.network.AudioSessionContext;
 import com.friz.audio.network.events.AudioRequestEvent;
+import com.friz.audio.network.events.FileRequestEvent;
 import com.friz.network.event.EventListener;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 
 import java.io.IOException;
+import java.util.Deque;
 
 /**
  * Created by Kyle Fricilone on 9/18/2015.
@@ -48,25 +50,13 @@ public class AudioRequestEventListener implements EventListener<AudioRequestEven
                 version = Integer.valueOf(query.parameters().get(key).get(0));
         }
 
-        ByteBuf container = Unpooled.buffer();
-        if (type == 255 && file == 255) {
-            container = Unpooled.wrappedBuffer(context.getServer().getCache().getChecksum());
-        } else {
-            if (context.getServer().getCache().getReferenceTable(type).getEntry(file).getCrc() != crc
-                    || context.getServer().getCache().getReferenceTable(type).getEntry(file).getVersion() != version) {
-                context.writeResponse(event.getRequest().getProtocolVersion(), container);
-                return;
-            }
-
-            try {
-                container = Unpooled.wrappedBuffer(context.getServer().getCache().getStore().read(type, file));
-                if (type != 255)
-                    container = container.slice(0, container.readableBytes() - 2);
-            } catch (IOException e) {
-                e.printStackTrace();
+        Deque<FileRequestEvent> queue = context.getFileQueue();
+        synchronized (queue) {
+            queue.add(new FileRequestEvent(type, file, crc, version, event.getRequest().getProtocolVersion()));
+            if (context.isIdle()) {
+                context.addContextToService();
+                context.setIdle(false);
             }
         }
-
-        context.writeResponse(event.getRequest().getProtocolVersion(), container);
     }
 }

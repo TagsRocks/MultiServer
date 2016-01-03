@@ -63,7 +63,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
             rsaBuf.readerIndex(rsaBuf.readerIndex() + 4);
         }
 
-        String password = BufferUtils.readString(rsaBuf);
+        String password = BufferUtils.getString(rsaBuf);
 
         long serverKey = rsaBuf.readLong();
         long clientKey = rsaBuf.readLong();
@@ -72,11 +72,11 @@ public class LoginDecoder extends ByteToMessageDecoder {
         buf.readBytes(xtea);
         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
 
-        boolean asLong = xteaBuf.readBoolean();
-        if (asLong)
-            xteaBuf.readLong();
+        boolean asBase = xteaBuf.readBoolean();
+        if (asBase)
+            BufferUtils.getBase37(xteaBuf);
         else
-            BufferUtils.readString(xteaBuf);
+            BufferUtils.getString(xteaBuf);
 
         int game = xteaBuf.readUnsignedByte();
         int lang = xteaBuf.readUnsignedByte();
@@ -90,7 +90,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
         for (int i = 0; i < uid.length; i++)
             uid[i] = xteaBuf.readByte();
 
-        String settings = BufferUtils.readString(xteaBuf);
+        String settings = BufferUtils.getString(xteaBuf);
 
         int prefSize = xteaBuf.readUnsignedByte();
         int prefVersion = xteaBuf.readUnsignedByte();
@@ -149,27 +149,27 @@ public class LoginDecoder extends ByteToMessageDecoder {
         int pocessorCount = xteaBuf.readUnsignedByte();
         int cpuPhyscialMemory = xteaBuf.readUnsignedMedium();
         int cpuClock = xteaBuf.readUnsignedShort();
-        String gpuName = BufferUtils.readString(xteaBuf);
-        String aString = BufferUtils.readString(xteaBuf);
-        String dxVersion = BufferUtils.readString(xteaBuf);
-        String aString1 = BufferUtils.readString(xteaBuf);
+        String gpuName = BufferUtils.getString(xteaBuf);
+        String aString = BufferUtils.getString(xteaBuf);
+        String dxVersion = BufferUtils.getString(xteaBuf);
+        String aString1 = BufferUtils.getString(xteaBuf);
         int gpuDriverMonth = xteaBuf.readUnsignedByte();
         int gpuDriverYear = xteaBuf.readUnsignedShort();
-        String cpuType = BufferUtils.readString(xteaBuf);
-        String cpuName = BufferUtils.readString(xteaBuf);
+        String cpuType = BufferUtils.getString(xteaBuf);
+        String cpuName = BufferUtils.getString(xteaBuf);
         int cpuThreads = xteaBuf.readUnsignedByte();
         int anInt = xteaBuf.readUnsignedByte();
         int anInt1 = xteaBuf.readInt();
         int anInt2 = xteaBuf.readInt();
         int anInt3 = xteaBuf.readInt();
         int anInt4 = xteaBuf.readInt();
-        String aString2 = BufferUtils.readString(xteaBuf);
+        String aString2 = BufferUtils.getString(xteaBuf);
 
         int anInt5 = xteaBuf.readInt();
-        String aString3 = BufferUtils.readString(xteaBuf);
+        String aString3 = BufferUtils.getString(xteaBuf);
         int affiliate = xteaBuf.readInt();
         int anInt6 = xteaBuf.readInt();
-        String aString4 = BufferUtils.readString(xteaBuf);
+        String aString4 = BufferUtils.getString(xteaBuf);
         int anInt7 = xteaBuf.readUnsignedByte();
 
         int[] checksums = new int[xteaBuf.readableBytes() / 4];
