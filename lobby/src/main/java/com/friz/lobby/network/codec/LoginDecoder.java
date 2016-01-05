@@ -72,11 +72,12 @@ public class LoginDecoder extends ByteToMessageDecoder {
         buf.readBytes(xtea);
         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
 
+        String username = "";
         boolean asBase = xteaBuf.readBoolean();
         if (asBase)
-            BufferUtils.getBase37(xteaBuf);
+            username = BufferUtils.getBase37(xteaBuf);
         else
-            BufferUtils.getString(xteaBuf);
+            username = BufferUtils.getString(xteaBuf);
 
         int game = xteaBuf.readUnsignedByte();
         int lang = xteaBuf.readUnsignedByte();

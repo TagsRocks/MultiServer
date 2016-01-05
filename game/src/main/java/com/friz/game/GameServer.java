@@ -18,9 +18,12 @@
 package com.friz.game;
 
 import com.friz.cache.Cache;
+import com.friz.game.network.GameChannelHandler;
 import com.friz.game.network.codec.LoginInitDecoder;
 import com.friz.game.network.codec.LoginInitEncoder;
 import com.friz.network.NetworkServer;
+import com.friz.network.SessionContext;
+import com.friz.network.event.EventHub;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -28,6 +31,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
 
@@ -38,6 +42,9 @@ public class GameServer extends NetworkServer {
 
     private final Cache cache;
 
+    private final EventHub hub = new EventHub();
+    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("game-attribute-key");
+
     public GameServer(Cache c) {
         this.cache = c;
     }
@@ -46,6 +53,8 @@ public class GameServer extends NetworkServer {
     public void initialize() {
         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         bootstrap = new ServerBootstrap();
+
+        GameServer s = this;
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
@@ -57,6 +66,7 @@ public class GameServer extends NetworkServer {
                         ChannelPipeline p = ch.pipeline();
                         p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
                         p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
+                        p.addLast(GameChannelHandler.class.getName(), new GameChannelHandler(s));
                     }
 
                 })
@@ -67,7 +77,7 @@ public class GameServer extends NetworkServer {
     @Override
     public void bind() {
         try {
-            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 40000)).sync();
+            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 40001)).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -84,5 +94,13 @@ public class GameServer extends NetworkServer {
 
     public final Cache getCache() {
         return cache;
+    }
+
+    public EventHub getHub() {
+        return hub;
+    }
+
+    public AttributeKey<SessionContext> getAttr() {
+        return attr;
     }
 }

@@ -18,16 +18,16 @@
 
 package com.friz.cache.tools;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.zip.CRC32;
-
 import com.friz.cache.Container;
 import com.friz.cache.FileStore;
 import com.friz.cache.ReferenceTable;
 import com.friz.cache.ReferenceTable.Entry;
 import com.friz.network.Constants;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.zip.CRC32;
 
 public final class CacheVerifier {
 

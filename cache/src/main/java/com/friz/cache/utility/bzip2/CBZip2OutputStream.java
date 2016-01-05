@@ -137,7 +137,7 @@ import java.io.OutputStream;
 public class CBZip2OutputStream extends OutputStream
     implements BZip2Constants {
 
-    private static final class Data extends Object {
+    private static final class Data {
 
         // with blockSize 900k
         final boolean[] inUse = new boolean[256]; // 256 byte
@@ -672,8 +672,6 @@ public class CBZip2OutputStream extends OutputStream
 
     private int runLength = 0;
 
-    private int blockCRC;
-
     private int combinedCRC;
 
     private int allowableBlockSize;
@@ -820,9 +818,9 @@ public class CBZip2OutputStream extends OutputStream
     }
 
     private void endBlock() throws IOException {
-        this.blockCRC = this.crc.getFinalCRC();
+        int blockCRC = this.crc.getFinalCRC();
         this.combinedCRC = (this.combinedCRC << 1) | (this.combinedCRC >>> 31);
-        this.combinedCRC ^= this.blockCRC;
+        this.combinedCRC ^= blockCRC;
 
         // empty block at end of file
         if (this.last == -1) {
@@ -851,7 +849,7 @@ public class CBZip2OutputStream extends OutputStream
         bsPutUByte(0x59);
 
         /* Now the block's CRC, so it is in a known place. */
-        bsPutInt(this.blockCRC);
+        bsPutInt(blockCRC);
 
         /* Now a single bit indicating randomisation. */
         if (this.blockRandomised) {
@@ -1225,7 +1223,7 @@ public class CBZip2OutputStream extends OutputStream
                         if (onceRunned) {
                             fmap[j] = a;
                             if ((j -= h) <= mj) {
-                                break HAMMER;
+                                break;
                             }
                         } else {
                             onceRunned = true;
@@ -1244,7 +1242,7 @@ public class CBZip2OutputStream extends OutputStream
                                         if (block[i1 + 5] == block[i2 + 5]) {
                                             if (block[(i1 += 6)] == block[(i2 += 6)]) {
                                                 int x = lastShadow;
-                                                X: while (x > 0) {
+                                                while (x > 0) {
                                                     x -= 4;
 
                                                     if (block[i1 + 1] == block[i2 + 1]) {
@@ -1262,7 +1260,6 @@ public class CBZip2OutputStream extends OutputStream
                                                                                         i2 -= lastPlus1;
                                                                                     }
                                                                                     workDoneShadow++;
-                                                                                    continue X;
                                                                                 } else if ((quadrant[i1 + 3] > quadrant[i2 + 3])) {
                                                                                     continue HAMMER;
                                                                                 } else {
@@ -1305,39 +1302,33 @@ public class CBZip2OutputStream extends OutputStream
                                                     }
 
                                                 }
-                                                break HAMMER;
+                                                break;
                                             } // while x > 0
                                             else {
                                                 if ((block[i1] & 0xff) > (block[i2] & 0xff)) {
-                                                    continue HAMMER;
                                                 } else {
-                                                    break HAMMER;
+                                                    break;
                                                 }
                                             }
                                         } else if ((block[i1 + 5] & 0xff) > (block[i2 + 5] & 0xff)) {
-                                            continue HAMMER;
                                         } else {
-                                            break HAMMER;
+                                            break;
                                         }
                                     } else if ((block[i1 + 4] & 0xff) > (block[i2 + 4] & 0xff)) {
-                                        continue HAMMER;
                                     } else {
-                                        break HAMMER;
+                                        break;
                                     }
                                 } else if ((block[i1 + 3] & 0xff) > (block[i2 + 3] & 0xff)) {
-                                    continue HAMMER;
                                 } else {
-                                    break HAMMER;
+                                    break;
                                 }
                             } else if ((block[i1 + 2] & 0xff) > (block[i2 + 2] & 0xff)) {
-                                continue HAMMER;
                             } else {
-                                break HAMMER;
+                                break;
                             }
                         } else if ((block[i1 + 1] & 0xff) > (block[i2 + 1] & 0xff)) {
-                            continue HAMMER;
                         } else {
-                            break HAMMER;
+                            break;
                         }
 
                     } // HAMMER
@@ -1597,7 +1588,7 @@ public class CBZip2OutputStream extends OutputStream
         sendMTFValues6(nGroups, alphaSize);
 
         /* And finally, the block data proper */
-        sendMTFValues7(nSelectors);
+        sendMTFValues7();
     }
 
     private void sendMTFValues0(final int nGroups, final int alphaSize) {
@@ -1950,7 +1941,7 @@ public class CBZip2OutputStream extends OutputStream
         this.bsLive = bsLiveShadow;
     }
 
-    private void sendMTFValues7(final int nSelectors) throws IOException {
+    private void sendMTFValues7() throws IOException {
         final Data dataShadow = this.data;
         final byte[][] len = dataShadow.sendMTFValues_len;
         final int[][] code = dataShadow.sendMTFValues_code;

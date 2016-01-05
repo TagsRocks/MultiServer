@@ -10,8 +10,8 @@
 package com.friz.cache.utility.tukaani;
 
 import java.io.FilterInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Counts the number of bytes read from an input stream.

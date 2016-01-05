@@ -10,15 +10,14 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.EOFException;
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.lz.LZDecoder;
 import com.friz.cache.utility.tukaani.lzma.LZMADecoder;
 import com.friz.cache.utility.tukaani.rangecoder.RangeDecoderFromStream;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Decompresses legacy .lzma files and raw LZMA streams (no .lzma header).

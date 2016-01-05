@@ -19,7 +19,6 @@
 package com.friz.network.utility;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 
@@ -35,7 +34,7 @@ public final class BufferUtils {
 	 */
 	public static void put5ByteInteger(ByteBuf buf, long value) {
 		buf.writeByte((int) (value >> 32));
-		buf.writeInt((int) (value & 0xffffffff));
+		buf.writeInt((int) (value));
 	}
 
     /**
@@ -45,7 +44,7 @@ public final class BufferUtils {
      */
     public static void put6ByteInteger(ByteBuf buf, long value) {
         buf.writeShort((int) (value >> 32));
-        buf.writeInt((int) (value & 0xffffffff));
+        buf.writeInt((int) (value));
     }
 	
 	/**

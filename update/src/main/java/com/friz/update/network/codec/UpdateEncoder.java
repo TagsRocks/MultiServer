@@ -33,12 +33,12 @@ public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent>
 	/**
 	 * The remaining bytes after the header.
 	 */
-	private static int BYTES_REMAINING_AFTER_HEADER = Sector.DATA_SIZE - 6;
+	private static final int BYTES_REMAINING_AFTER_HEADER = Sector.DATA_SIZE - 6;
 	
 	/**
 	 * The remaining bytes after the block.
 	 */
-	private static int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
+	private static final int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
 
     @Override
 	protected void encode(ChannelHandlerContext ctx, FileResponseEvent msg, ByteBuf buffer) throws Exception {

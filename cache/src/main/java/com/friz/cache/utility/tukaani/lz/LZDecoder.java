@@ -10,10 +10,10 @@
 
 package com.friz.cache.utility.tukaani.lz;
 
+import com.friz.cache.utility.tukaani.CorruptedInputException;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import com.friz.cache.utility.tukaani.CorruptedInputException;
 
 public final class LZDecoder {
     private final byte[] buf;

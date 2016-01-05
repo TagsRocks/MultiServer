@@ -17,12 +17,12 @@
  */
 package com.friz.cache.utility;
 
+import com.friz.cache.utility.crypto.Whirlpool;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-
-import com.friz.cache.utility.crypto.Whirlpool;
 
 /**
  * Contains {@link ByteBuffer}-related utility methods.
@@ -34,7 +34,7 @@ public final class ByteBufferUtils {
 	/**
 	 * The modified set of 'extended ASCII' characters used by the client.
 	 */
-	private static char CHARACTERS[] = { '\u20AC', '\0', '\u201A', '\u0192',
+	private static final char[] CHARACTERS = { '\u20AC', '\0', '\u201A', '\u0192',
 		'\u201E', '\u2026', '\u2020', '\u2021', '\u02C6', '\u2030',
 		'\u0160', '\u2039', '\u0152', '\0', '\u017D', '\0', '\0', '\u2018',
 		'\u2019', '\u201C', '\u201D', '\u2022', '\u2013', '\u2014',
@@ -165,8 +165,8 @@ public final class ByteBufferUtils {
 
 	/**
 	 * Creates a string from byets in the buffer
-	 * @param buf
-	 * @return
+	 * @param buf The buffer
+	 * @return The string
 	 */
 	public static String getString(ByteBuffer buf) {
 		StringBuilder bldr = new StringBuilder();

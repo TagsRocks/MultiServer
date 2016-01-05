@@ -9,14 +9,14 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
-import com.friz.cache.utility.tukaani.common.DecoderUtil;
 import com.friz.cache.utility.tukaani.check.Check;
+import com.friz.cache.utility.tukaani.common.DecoderUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 class BlockInputStream extends InputStream {
     private final DataInputStream inData;

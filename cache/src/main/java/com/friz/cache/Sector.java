@@ -17,9 +17,9 @@
  */
 package com.friz.cache;
 
-import java.nio.ByteBuffer;
-
 import com.friz.cache.utility.ByteBufferUtils;
+
+import java.nio.ByteBuffer;
 
 /**
  * @author Graham

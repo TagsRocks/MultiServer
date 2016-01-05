@@ -69,7 +69,7 @@ public class AudioSessionContext extends SessionContext<AudioServer> {
      * Processes the file requests.
      * @throws IOException The exception thrown if an i/o error occurs.
      */
-    public void processFileQueue() throws IOException {
+    public void processFileQueue() {
         FileRequestEvent request;
         synchronized (fileQueue) {
             request = fileQueue.pop();

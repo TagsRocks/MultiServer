@@ -22,6 +22,7 @@ import com.friz.audio.AudioServer;
 import com.friz.cache.Cache;
 import com.friz.cache.FileStore;
 import com.friz.game.GameServer;
+import com.friz.lobby.LobbyServer;
 import com.friz.login.LoginServer;
 import com.friz.network.Constants;
 import com.friz.update.UpdateServer;
@@ -34,29 +35,34 @@ import java.io.IOException;
 public class MasterServer {
 
     public static void main(String[] args) throws Exception {
-        Cache c = new Cache(FileStore.open(Constants.CACHE_LOCATION));
-        c.initialize();
-        System.out.println("Cache Initialized " + c.getTypeCount() + " Index(es)");
+        Cache cache = new Cache(FileStore.open(Constants.CACHE_LOCATION));
+        cache.initialize();
+        System.out.println("Cache Initialized " + cache.getTypeCount() + " Index(es)");
 
-        UpdateServer u = new UpdateServer(c);
-        u.initialize();
-        u.bind();
-        System.out.println("UpdateServer initialized on: " + u.getAddress());
+        UpdateServer updateServer = new UpdateServer(cache);
+        updateServer.initialize();
+        updateServer.bind();
+        System.out.println("UpdateServer initialized on: " + updateServer.getAddress());
 
-        AudioServer a = new AudioServer(c);
-        a.initialize();
-        a.bind();
-        System.out.println("AudioServer initialized on: " + a.getAddress());
+        AudioServer audioServer = new AudioServer(cache);
+        audioServer.initialize();
+        audioServer.bind();
+        System.out.println("AudioServer initialized on: " + audioServer.getAddress());
 
-        LoginServer l = new LoginServer();
-      //  l.initialize();
-      //  l.bind();
-      //  System.out.println("LoginServer initialized on: " + l.getAddress());
+        LoginServer loginServer = new LoginServer();
+        loginServer.initialize();
+        loginServer.bind();
+        System.out.println("LoginServer initialized on: " + loginServer.getAddress());
 
-        GameServer g = new GameServer(c);
-      //  g.initialize();
-      //  g.bind();
-      //  System.out.println("GameServer initialized on: " + g.getAddress());
+        LobbyServer lobbyServer = new LobbyServer(cache);
+        lobbyServer.initialize();
+        lobbyServer.bind();
+        System.out.println("LobbyServer initialized on: " + lobbyServer.getAddress());
+
+        GameServer gameServer = new GameServer(cache);
+        gameServer.initialize();
+        gameServer.bind();
+        System.out.println("GameServer initialized on: " + gameServer.getAddress());
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -64,14 +70,15 @@ public class MasterServer {
             public void run() {
                 System.out.println("hook");
                 try {
-                    c.close();
+                    cache.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    updateServer.stop();
+                    audioServer.stop();
+                    loginServer.stop();
+                    gameServer.stop();
                 }
-                u.stop();
-                a.stop();
-                l.stop();
-                g.stop();
             }
 
         });

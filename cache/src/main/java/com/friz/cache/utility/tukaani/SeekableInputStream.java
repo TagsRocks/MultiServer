@@ -9,8 +9,8 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Input stream with random access support.
@@ -57,12 +57,12 @@ public abstract class SeekableInputStream extends InputStream {
     /**
      * Gets the size of the stream.
      */
-    public abstract long length() throws IOException;
+    public abstract long length();
 
     /**
      * Gets the current position in the stream.
      */
-    public abstract long position() throws IOException;
+    public abstract long position();
 
     /**
      * Seeks to the specified absolute position in the stream.
@@ -77,5 +77,5 @@ public abstract class SeekableInputStream extends InputStream {
      * @throws      IOException if <code>pos</code> is negative or if
      *                          a stream-specific I/O error occurs
      */
-    public abstract void seek(long pos) throws IOException;
+    public abstract void seek(long pos);
 }

@@ -18,15 +18,15 @@
 
 package com.friz.cache.tools;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.zip.CRC32;
-
-import com.friz.cache.FileStore;
 import com.friz.cache.Container;
+import com.friz.cache.FileStore;
 import com.friz.cache.ReferenceTable;
 import com.friz.cache.ReferenceTable.Entry;
 import com.friz.network.Constants;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.zip.CRC32;
 
 public final class CacheAggregator {
 
@@ -76,11 +76,8 @@ public final class CacheAggregator {
 		}
 
 		buffer.position(buffer.limit() - 2);
-		if ((buffer.getShort() & 0xFFFF) != entry.getVersion()) {
-			return true;
-		}
+		return (buffer.getShort() & 0xFFFF) != entry.getVersion();
 
-		return false;
 	}
 
 }

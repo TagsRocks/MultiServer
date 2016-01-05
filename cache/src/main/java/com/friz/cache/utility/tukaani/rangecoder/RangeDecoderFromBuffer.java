@@ -10,10 +10,10 @@
 
 package com.friz.cache.utility.tukaani.rangecoder;
 
+import com.friz.cache.utility.tukaani.CorruptedInputException;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import com.friz.cache.utility.tukaani.CorruptedInputException;
 
 public final class RangeDecoderFromBuffer extends RangeDecoder {
     private static final int INIT_SIZE = 5;

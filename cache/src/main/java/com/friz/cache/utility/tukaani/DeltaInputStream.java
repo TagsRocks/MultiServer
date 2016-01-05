@@ -9,9 +9,8 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Decodes raw Delta-filtered data (no XZ headers).

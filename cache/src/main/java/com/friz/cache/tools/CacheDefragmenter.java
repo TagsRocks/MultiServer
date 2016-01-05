@@ -18,14 +18,14 @@
 
 package com.friz.cache.tools;
 
+import com.friz.cache.Container;
+import com.friz.cache.FileStore;
+import com.friz.cache.ReferenceTable;
+import com.friz.network.Constants;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
-
-import com.friz.cache.FileStore;
-import com.friz.cache.ReferenceTable;
-import com.friz.cache.Container;
-import com.friz.network.Constants;
 
 public final class CacheDefragmenter {
 

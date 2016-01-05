@@ -33,8 +33,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.AttributeKey;
 
@@ -63,7 +61,7 @@ public class AudioServer extends NetworkServer {
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
-                .handler(new LoggingHandler(LogLevel.INFO))
+                //.handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override

@@ -22,11 +22,8 @@ import com.friz.audio.network.AudioSessionContext;
 import com.friz.audio.network.events.AudioRequestEvent;
 import com.friz.audio.network.events.FileRequestEvent;
 import com.friz.network.event.EventListener;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
-import java.io.IOException;
 import java.util.Deque;
 
 /**

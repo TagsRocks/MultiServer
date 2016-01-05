@@ -10,14 +10,13 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.lz.LZDecoder;
 import com.friz.cache.utility.tukaani.lzma.LZMADecoder;
 import com.friz.cache.utility.tukaani.rangecoder.RangeDecoderFromBuffer;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Decompresses a raw LZMA2 stream (no XZ headers).

@@ -9,16 +9,15 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.check.Check;
 import com.friz.cache.utility.tukaani.common.DecoderUtil;
 import com.friz.cache.utility.tukaani.common.StreamFlags;
 import com.friz.cache.utility.tukaani.index.IndexHash;
 
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Decompresses exactly one XZ Stream in streamed mode (no seeking).

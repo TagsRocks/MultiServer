@@ -9,9 +9,9 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.simple.*;
+
+import java.io.InputStream;
 
 class BCJDecoder extends BCJCoder implements FilterDecoder {
     private final long filterID;

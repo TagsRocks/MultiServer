@@ -18,9 +18,12 @@
 package com.friz.lobby;
 
 import com.friz.cache.Cache;
+import com.friz.lobby.network.LobbyChannelHandler;
 import com.friz.lobby.network.codec.LoginInitDecoder;
 import com.friz.lobby.network.codec.LoginInitEncoder;
 import com.friz.network.NetworkServer;
+import com.friz.network.SessionContext;
+import com.friz.network.event.EventHub;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -28,6 +31,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
 
@@ -38,6 +42,9 @@ public class LobbyServer extends NetworkServer {
 
     private final Cache cache;
 
+    private final EventHub hub = new EventHub();
+    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("lobby-attribute-key");
+
     public LobbyServer(Cache c) {
         this.cache = c;
     }
@@ -47,9 +54,11 @@ public class LobbyServer extends NetworkServer {
         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         bootstrap = new ServerBootstrap();
 
+        LobbyServer s = this;
+
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
-                        //.handler(new LoggingHandler(LogLevel.INFO))
+                //.handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override
@@ -57,6 +66,7 @@ public class LobbyServer extends NetworkServer {
                         ChannelPipeline p = ch.pipeline();
                         p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
                         p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
+                        p.addLast(LobbyChannelHandler.class.getName(), new LobbyChannelHandler(s));
                     }
 
                 })
@@ -84,5 +94,13 @@ public class LobbyServer extends NetworkServer {
 
     public final Cache getCache() {
         return cache;
+    }
+
+    public EventHub getHub() {
+        return hub;
+    }
+
+    public AttributeKey<SessionContext> getAttr() {
+        return attr;
     }
 }

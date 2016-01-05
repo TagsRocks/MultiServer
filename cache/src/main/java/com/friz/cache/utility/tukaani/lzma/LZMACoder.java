@@ -51,7 +51,7 @@ abstract class LZMACoder {
                                     new short[32], new short[32] };
     final short[] distAlign = new short[ALIGN_SIZE];
 
-    static final int getDistState(int len) {
+    static int getDistState(int len) {
         return len < DIST_STATES + MATCH_LEN_MIN
                ? len - MATCH_LEN_MIN
                : DIST_STATES - 1;

@@ -9,11 +9,10 @@
 
 package com.friz.cache.utility.tukaani;
 
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.simple.SimpleFilter;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 class SimpleInputStream extends InputStream {
     private static final int FILTER_BUF_SIZE = 4096;

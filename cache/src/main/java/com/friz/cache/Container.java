@@ -17,10 +17,10 @@
  */
 package com.friz.cache;
 
+import com.friz.cache.utility.CompressionUtils;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import com.friz.cache.utility.CompressionUtils;
 
 
 /**
@@ -122,7 +122,7 @@ public final class Container {
 	/**
 	 * The decompressed data.
 	 */
-	private ByteBuffer data;
+	private final ByteBuffer data;
 
 	/**
 	 * The version of the file within this container.

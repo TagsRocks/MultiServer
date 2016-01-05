@@ -17,17 +17,13 @@
  */
 package com.friz.cache.utility;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
 import com.friz.cache.utility.bzip2.CBZip2InputStream;
 import com.friz.cache.utility.bzip2.CBZip2OutputStream;
 import com.friz.cache.utility.tukaani.LZMAInputStream;
+
+import java.io.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * A class that contains methods to compress and uncompress BZIP2 and GZIP byte
@@ -185,7 +181,7 @@ public final class CompressionUtils {
 		/* prepare a new byte array with the lzma header at the start */
 		byte[] lzma = new byte[bytes.length + 8];
 		System.arraycopy(bytes, 0, lzma, 0, 5);
-		lzma[5] = (byte) (size >>> 0);
+		lzma[5] = (byte) (size);
 		lzma[6] = (byte) (size >>> 8);
 		lzma[7] = (byte) (size >>> 16);
 		lzma[8] = (byte) (size >>> 24);

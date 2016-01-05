@@ -17,15 +17,15 @@
  */
 package com.friz.cache;
 
+import com.friz.cache.utility.ByteBufferUtils;
+import com.friz.cache.utility.crypto.BKDR;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import com.friz.cache.utility.ByteBufferUtils;
-import com.friz.cache.utility.crypto.BKDR;
 
 /**
  * A {@link ReferenceTable} holds details for all the files with a single
@@ -52,7 +52,7 @@ public class ReferenceTable {
 		/**
 		 * The cache index of this entry
 		 */
-		private int index;
+		private final int index;
 		
 		public ChildEntry (int index) {
 			this.index = index;
@@ -118,7 +118,7 @@ public class ReferenceTable {
 		/**
 		 * The whirlpool digest of this entry.
 		 */
-		private byte[] whirlpool = new byte[64];
+		private final byte[] whirlpool = new byte[64];
 
 		/**
 		 * The version of this entry.
@@ -128,12 +128,12 @@ public class ReferenceTable {
 		/**
 		 * The cache index of this entry
 		 */
-		private int index;
+		private final int index;
 
 		/**
 		 * The children in this entry.
 		 */
-		private SortedMap<Integer, ChildEntry> entries = new TreeMap<Integer, ChildEntry>();
+		private final SortedMap<Integer, ChildEntry> entries = new TreeMap<Integer, ChildEntry>();
 
 		public Entry (int index) {
 			this.index = index;
@@ -235,9 +235,8 @@ public class ReferenceTable {
 		/**
 		 * Removes the entry with the specified id.
 		 * @param id The id.
-		 * @param entry The entry.
 		 */
-		public void removeEntry(int id, ChildEntry entry) {
+		public void removeEntry(int id) {
 			entries.remove(id);
 		}
 
@@ -466,7 +465,7 @@ public class ReferenceTable {
 	/**
 	 * The entries in this table.
 	 */
-	private SortedMap<Integer, Entry> entries = new TreeMap<Integer, Entry>();
+	private final SortedMap<Integer, Entry> entries = new TreeMap<Integer, Entry>();
 
 	/**
 	 * Gets the maximum number of entries in this table.

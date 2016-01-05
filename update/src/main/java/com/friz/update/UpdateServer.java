@@ -22,13 +22,14 @@ import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
 import com.friz.update.network.UpdateChannelHandler;
-import com.friz.update.network.codec.*;
+import com.friz.update.network.codec.UpdateInitDecoder;
+import com.friz.update.network.codec.UpdateInitEncoder;
 import com.friz.update.network.events.FileRequestEvent;
-import com.friz.update.network.events.XorRequestEvent;
 import com.friz.update.network.events.UpdateRequestEvent;
-import com.friz.update.network.listeners.XorRequestEventListener;
+import com.friz.update.network.events.XorRequestEvent;
 import com.friz.update.network.listeners.FileRequestEventListener;
 import com.friz.update.network.listeners.UpdateRequestEventListener;
+import com.friz.update.network.listeners.XorRequestEventListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -36,8 +37,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
 
@@ -66,7 +65,7 @@ public class UpdateServer extends NetworkServer {
 
         bootstrap.group(group)
                 .channel(NioServerSocketChannel.class)
-                .handler(new LoggingHandler(LogLevel.INFO))
+                //.handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
 
                     @Override

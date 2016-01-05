@@ -17,9 +17,9 @@
  */
 package com.friz.cache;
 
-import java.nio.ByteBuffer;
-
 import com.friz.cache.utility.ByteBufferUtils;
+
+import java.nio.ByteBuffer;
 
 
 /**
@@ -51,12 +51,12 @@ public final class Index {
 	/**
 	 * The size of the file in bytes.
 	 */
-	private int size;
+	private final int size;
 
 	/**
 	 * The number of the first sector that contains the file.
 	 */
-	private int sector;
+	private final int sector;
 
 	/**
 	 * Creates a new index.

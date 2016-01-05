@@ -18,7 +18,6 @@ public class None extends Check {
     public void update(byte[] buf, int off, int len) {}
 
     public byte[] finish() {
-        byte[] empty = new byte[0];
-        return empty;
+        return new byte[0];
     }
 }

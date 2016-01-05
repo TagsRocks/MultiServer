@@ -9,15 +9,15 @@
 
 package com.friz.cache.utility.tukaani.common;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.util.zip.CRC32;
-
 import com.friz.cache.utility.tukaani.CorruptedInputException;
 import com.friz.cache.utility.tukaani.UnsupportedOptionsException;
 import com.friz.cache.utility.tukaani.XZ;
 import com.friz.cache.utility.tukaani.XZFormatException;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.CRC32;
 
 public class DecoderUtil extends Util {
     public static boolean isCRC32Valid(byte[] buf, int off, int len,

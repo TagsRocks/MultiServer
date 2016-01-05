@@ -46,7 +46,7 @@ public abstract class Check {
             case XZ.CHECK_SHA256:
                 try {
                     return new SHA256();
-                } catch (java.security.NoSuchAlgorithmException e) {}
+                } catch (java.security.NoSuchAlgorithmException ignored) {}
 
                 break;
         }

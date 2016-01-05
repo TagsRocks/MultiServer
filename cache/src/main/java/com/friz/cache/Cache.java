@@ -59,7 +59,7 @@ public final class Cache implements Closeable {
 	 * @param store The {@link FileStore} that backs this {@link Cache}.
 	 * @throws IOException 
 	 */
-	public Cache(FileStore store) throws IOException {
+	public Cache(FileStore store) {
 		this.store = store;
 	}
 
@@ -176,7 +176,7 @@ public final class Cache implements Closeable {
 	 * Reads a file contained in an archive in the cache.
 	 * @param type The type of the file.
 	 * @param file The archive id.
-	 * @param file The file within the archive.
+	 * @param member The file within the archive.
 	 * @return The file.
 	 * @throws IOException if an I/O error occurred.
 	 */

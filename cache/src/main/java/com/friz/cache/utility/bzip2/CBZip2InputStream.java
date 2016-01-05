@@ -45,7 +45,7 @@ import java.io.InputStream;
  */
 public class CBZip2InputStream extends InputStream implements BZip2Constants {
 
-    private static final class Data extends Object {
+    private static final class Data {
 
         // (with blockSize 900k)
         final boolean[] inUse   = new boolean[256];                                   //      256 byte
@@ -73,7 +73,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
         //    60798 byte
 
         int[] tt;                                                                     //  3600000 byte
-        byte[] ll8;                                                                   //   900000 byte
+        final byte[] ll8;                                                                   //   900000 byte
         //---------------
         //  4560782 byte
         //===============
@@ -203,7 +203,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
 
     // Variables used by setup* methods exclusively
 
-    private int computedBlockCRC, computedCombinedCRC;
+    private int computedCombinedCRC;
     private int su_count;
     private int su_ch2;
     private int su_chPrev;
@@ -351,10 +351,10 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
     }
 
     private void endBlock() throws IOException {
-        this.computedBlockCRC = this.crc.getFinalCRC();
+        int computedBlockCRC = this.crc.getFinalCRC();
 
         // A bad CRC is considered a fatal error.
-        if (this.storedBlockCRC != this.computedBlockCRC) {
+        if (this.storedBlockCRC != computedBlockCRC) {
             // make next blocks readable without error
             // (repair feature, not yet documented, not tested)
             this.computedCombinedCRC
@@ -368,7 +368,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
         this.computedCombinedCRC
             = (this.computedCombinedCRC << 1)
             | (this.computedCombinedCRC >>> 31);
-        this.computedCombinedCRC ^= this.computedBlockCRC;
+        this.computedCombinedCRC ^= computedBlockCRC;
     }
 
     private void getAndMoveToFrontDecode() throws IOException {
@@ -445,7 +445,6 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                         if (thech >= 0) {
                             bsBuffShadow = (bsBuffShadow << 8) | thech;
                             bsLiveShadow += 8;
-                            continue;
                         } else {
                             throw new IOException("unexpected end of stream");
                         }
@@ -460,7 +459,6 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                             if (thech >= 0) {
                                 bsBuffShadow = (bsBuffShadow << 8) | thech;
                                 bsLiveShadow += 8;
-                                continue;
                             } else {
                                 throw new IOException("unexpected end of stream");
                             }
@@ -525,7 +523,6 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                     if (thech >= 0) {
                         bsBuffShadow = (bsBuffShadow << 8) | thech;
                         bsLiveShadow += 8;
-                        continue;
                     } else {
                         throw new IOException("unexpected end of stream");
                     }
@@ -540,7 +537,6 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                         if (thech >= 0) {
                             bsBuffShadow = (bsBuffShadow << 8) | thech;
                             bsLiveShadow += 8;
-                            continue;
                         } else {
                             throw new IOException("unexpected end of stream");
                         }
@@ -576,7 +572,6 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                 if (thech >= 0) {
                     bsBuffShadow = (bsBuffShadow << 8) | thech;
                     bsLiveShadow += 8;
-                    continue;
                 } else {
                     throw new IOException("unexpected end of stream");
                 }

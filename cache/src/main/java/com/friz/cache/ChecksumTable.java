@@ -17,14 +17,14 @@
  */
 package com.friz.cache;
 
+import com.friz.cache.utility.crypto.Rsa;
+import com.friz.cache.utility.crypto.Whirlpool;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-
-import com.friz.cache.utility.crypto.Rsa;
-import com.friz.cache.utility.crypto.Whirlpool;
 
 /**
  * A {@link ChecksumTable} stores checksums and versions of

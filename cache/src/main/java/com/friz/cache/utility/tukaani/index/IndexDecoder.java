@@ -9,16 +9,16 @@
 
 package com.friz.cache.utility.tukaani.index;
 
-import java.io.IOException;
-import java.io.EOFException;
-import java.util.zip.CheckedInputStream;
-
+import com.friz.cache.utility.tukaani.CorruptedInputException;
 import com.friz.cache.utility.tukaani.MemoryLimitException;
 import com.friz.cache.utility.tukaani.SeekableInputStream;
-import com.friz.cache.utility.tukaani.common.DecoderUtil;
-import com.friz.cache.utility.tukaani.CorruptedInputException;
 import com.friz.cache.utility.tukaani.UnsupportedOptionsException;
+import com.friz.cache.utility.tukaani.common.DecoderUtil;
 import com.friz.cache.utility.tukaani.common.StreamFlags;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.util.zip.CheckedInputStream;
 
 public class IndexDecoder extends IndexBase {
     private final StreamFlags streamFlags;

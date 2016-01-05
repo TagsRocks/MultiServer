@@ -10,12 +10,11 @@
 
 package com.friz.cache.utility.tukaani.rangecoder;
 
-import java.io.InputStream;
-
 import com.friz.cache.utility.tukaani.CorruptedInputException;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public final class RangeDecoderFromStream extends RangeDecoder {
     private final DataInputStream inData;

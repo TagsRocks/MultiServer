@@ -17,17 +17,13 @@
  */
 package com.friz.cache;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import com.friz.cache.utility.FileChannelUtils;
+
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.friz.cache.utility.FileChannelUtils;
 
 
 /**
@@ -75,7 +71,7 @@ public final class FileStore implements Closeable {
 		raf = new RandomAccessFile(meta, "rw");
 		FileChannel metaChannel = raf.getChannel();
 
-		return new FileStore(dataChannel, indexChannels.toArray(new FileChannel[0]), metaChannel);
+		return new FileStore(dataChannel, indexChannels.toArray(new FileChannel[indexChannels.size()]), metaChannel);
 	}
 
 	/**
@@ -173,7 +169,7 @@ public final class FileStore implements Closeable {
 	 * @return The number of index files.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public int getTypeCount() throws IOException {
+	public int getTypeCount() {
 		return indexChannels.length;
 	}
 

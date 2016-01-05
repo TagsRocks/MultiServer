@@ -16,26 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.listeners;
+package com.friz.game.network;
 
-import com.friz.network.event.EventListener;
-import com.friz.update.network.UpdateSessionContext;
-import com.friz.update.network.events.UpdateRequestEvent;
-import com.friz.update.network.events.UpdateResponseEvent;
-
+import com.friz.game.GameServer;
+import com.friz.network.SessionContext;
+import io.netty.channel.Channel;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/8/2015.
  */
-public final class UpdateRequestEventListener implements EventListener<UpdateRequestEvent, UpdateSessionContext> {
+public class GameSessionContext extends SessionContext<GameServer> {
 
-	@Override
-	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
-		if (version.getVersion() == 855) {
-			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
-		} else {
-			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);
-		}
-	}
 
+    public GameSessionContext(Channel c, GameServer gameServer) {
+        super(c, gameServer);
+    }
 }

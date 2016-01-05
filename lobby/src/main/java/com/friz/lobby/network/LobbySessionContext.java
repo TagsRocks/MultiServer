@@ -16,26 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.listeners;
+package com.friz.lobby.network;
 
-import com.friz.network.event.EventListener;
-import com.friz.update.network.UpdateSessionContext;
-import com.friz.update.network.events.UpdateRequestEvent;
-import com.friz.update.network.events.UpdateResponseEvent;
-
+import com.friz.lobby.LobbyServer;
+import com.friz.network.SessionContext;
+import io.netty.channel.Channel;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/8/2015.
  */
-public final class UpdateRequestEventListener implements EventListener<UpdateRequestEvent, UpdateSessionContext> {
+public class LobbySessionContext extends SessionContext<LobbyServer> {
 
-	@Override
-	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
-		if (version.getVersion() == 855) {
-			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
-		} else {
-			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);
-		}
-	}
 
+    public LobbySessionContext(Channel c, LobbyServer lobbyServer) {
+        super(c, lobbyServer);
+    }
 }

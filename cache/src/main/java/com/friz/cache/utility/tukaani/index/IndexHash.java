@@ -9,19 +9,19 @@
 
 package com.friz.cache.utility.tukaani.index;
 
-import java.io.InputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.zip.CheckedInputStream;
-
 import com.friz.cache.utility.tukaani.CorruptedInputException;
 import com.friz.cache.utility.tukaani.XZIOException;
 import com.friz.cache.utility.tukaani.check.CRC32;
 import com.friz.cache.utility.tukaani.check.Check;
 import com.friz.cache.utility.tukaani.check.SHA256;
 import com.friz.cache.utility.tukaani.common.DecoderUtil;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.zip.CheckedInputStream;
 
 public class IndexHash extends IndexBase {
     private Check hash;

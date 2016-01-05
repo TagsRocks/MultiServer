@@ -10,10 +10,10 @@
 
 package com.friz.cache.utility.tukaani.lzma;
 
-import java.io.IOException;
-
-import com.friz.cache.utility.tukaani.rangecoder.RangeDecoder;
 import com.friz.cache.utility.tukaani.lz.LZDecoder;
+import com.friz.cache.utility.tukaani.rangecoder.RangeDecoder;
+
+import java.io.IOException;
 
 public final class LZMADecoder extends LZMACoder {
     private final LZDecoder lz;
@@ -132,7 +132,7 @@ public final class LZMADecoder extends LZMACoder {
 
 
     private class LiteralDecoder extends LiteralCoder {
-        LiteralSubdecoder[] subdecoders;
+        final LiteralSubdecoder[] subdecoders;
 
         LiteralDecoder(int lc, int lp) {
             super(lc, lp);
