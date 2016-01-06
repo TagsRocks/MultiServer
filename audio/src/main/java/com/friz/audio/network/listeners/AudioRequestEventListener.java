@@ -47,6 +47,9 @@ public class AudioRequestEventListener implements EventListener<AudioRequestEven
                 version = Integer.valueOf(query.parameters().get(key).get(0));
         }
 
+        if (type == -1 || file == -1)
+            return;
+
         Deque<FileRequestEvent> queue = context.getFileQueue();
         synchronized (queue) {
             queue.add(new FileRequestEvent(type, file, crc, version, event.getRequest().getProtocolVersion()));

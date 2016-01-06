@@ -7,6 +7,54 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir 'audio/src/main/java'
+                    + 'cache/src/main/java'
+                    + 'game/src/main/java'
+                    + 'lobby/src/main/java'
+                    + 'lobin/src/main/java'
+                    + 'master/src/main/java'
+                    + 'network/src/main/java'
+                    + 'update/src/main/java'
+        }
+        resources {
+            srcDir 'audio/src/main/resources'
+                    + 'cache/src/main/resources'
+                    + 'game/src/main/resources'
+                    + 'lobby/src/main/resources'
+                    + 'lobin/src/main/resources'
+                    + 'master/src/main/resources'
+                    + 'network/src/main/resources'
+                    + 'update/src/main/resources'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'audio/src/test/java'
+                    + 'cache/src/test/java'
+                    + 'game/src/test/java'
+                    + 'lobby/src/test/java'
+                    + 'lobin/src/test/java'
+                    + 'master/src/test/java'
+                    + 'network/src/test/java'
+                    + 'update/src/test/java'
+        }
+        resources {
+            srcDir 'audio/src/test/resources'
+                    + 'cache/src/test/resources'
+                    + 'game/src/test/resources'
+                    + 'lobby/src/test/resources'
+                    + 'lobin/src/test/resources'
+                    + 'master/src/test/resources'
+                    + 'network/src/test/resources'
+                    + 'update/src/test/resources'
+        }
+    }
+}
+
 dependencies {
     compile group: 'io.netty', name: 'netty-all', version: '4.0.33.Final'
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
