@@ -37,6 +37,7 @@ public class GameChannelHandler extends SimpleChannelInboundHandler<Event> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("[GameServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new GameSessionContext(ctx.channel(), server));
     }
 

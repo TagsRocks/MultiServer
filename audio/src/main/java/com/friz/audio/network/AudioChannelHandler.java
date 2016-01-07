@@ -38,6 +38,7 @@ public class AudioChannelHandler extends SimpleChannelInboundHandler<FullHttpReq
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("[AudioServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new AudioSessionContext(ctx.channel(), server));
     }
 

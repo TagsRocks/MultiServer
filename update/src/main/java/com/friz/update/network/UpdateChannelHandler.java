@@ -37,6 +37,7 @@ public class UpdateChannelHandler extends SimpleChannelInboundHandler<Event> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("[UpdateServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new UpdateSessionContext(ctx.channel(), server));
     }
 

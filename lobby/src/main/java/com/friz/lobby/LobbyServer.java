@@ -21,6 +21,8 @@ import com.friz.cache.Cache;
 import com.friz.lobby.network.LobbyChannelHandler;
 import com.friz.lobby.network.codec.LoginInitDecoder;
 import com.friz.lobby.network.codec.LoginInitEncoder;
+import com.friz.lobby.network.events.LoginInitRequestEvent;
+import com.friz.lobby.network.listeners.LoginInitEventListener;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
@@ -72,6 +74,8 @@ public class LobbyServer extends NetworkServer {
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
+
+        hub.listen(LoginInitRequestEvent.class, new LoginInitEventListener());
     }
 
     @Override

@@ -37,6 +37,7 @@ public class LobbyChannelHandler extends SimpleChannelInboundHandler<Event> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("[LobbyServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new LobbySessionContext(ctx.channel(), server));
     }
 

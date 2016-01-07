@@ -36,7 +36,7 @@ public class UpdateInitDecoder extends ByteToMessageDecoder {
         int type = buf.readUnsignedByte();
         int size = buf.readUnsignedByte();
 
-        if (buf.readableBytes() < size)
+        if (!buf.isReadable(size))
             return;
 
         int version = buf.readInt();

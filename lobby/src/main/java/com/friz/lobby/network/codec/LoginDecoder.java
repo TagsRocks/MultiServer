@@ -18,6 +18,7 @@
 
 package com.friz.lobby.network.codec;
 
+import com.friz.network.Constants;
 import com.friz.network.utility.BufferUtils;
 import com.friz.network.utility.XTEA;
 import io.netty.buffer.ByteBuf;
@@ -38,6 +39,9 @@ public class LoginDecoder extends ByteToMessageDecoder {
         int type = buf.readUnsignedByte();
         int size = buf.readUnsignedShort();
 
+        if (!buf.isReadable(size))
+            return;
+
         int major = buf.readInt();
         int minor = buf.readInt();
 
@@ -45,7 +49,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
         byte[] rsa = new byte[rsaSize];
         buf.readBytes(rsa);
 
-        ByteBuf rsaBuf = Unpooled.wrappedBuffer(new BigInteger(rsa).modPow(BigInteger.ONE, BigInteger.ONE).toByteArray());
+        ByteBuf rsaBuf = Unpooled.wrappedBuffer(new BigInteger(rsa).modPow(Constants.LOGIN_EXPONENT, Constants.LOGIN_MODULUS).toByteArray());
         int rsaMagic = rsaBuf.readUnsignedByte();
 
         int[] key = new int[4];
@@ -73,11 +77,11 @@ public class LoginDecoder extends ByteToMessageDecoder {
         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
 
         String username = "";
-        boolean asBase = xteaBuf.readBoolean();
-        if (asBase)
-            username = BufferUtils.getBase37(xteaBuf);
-        else
+        boolean asString = xteaBuf.readBoolean();
+        if (asString)
             username = BufferUtils.getString(xteaBuf);
+        else
+            username = BufferUtils.getBase37(xteaBuf);
 
         int game = xteaBuf.readUnsignedByte();
         int lang = xteaBuf.readUnsignedByte();
@@ -91,7 +95,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
         for (int i = 0; i < uid.length; i++)
             uid[i] = xteaBuf.readByte();
 
-        String settings = BufferUtils.getString(xteaBuf);
+        String token = BufferUtils.getString(xteaBuf);
 
         int prefSize = xteaBuf.readUnsignedByte();
         int prefVersion = xteaBuf.readUnsignedByte();
@@ -150,14 +154,14 @@ public class LoginDecoder extends ByteToMessageDecoder {
         int pocessorCount = xteaBuf.readUnsignedByte();
         int cpuPhyscialMemory = xteaBuf.readUnsignedMedium();
         int cpuClock = xteaBuf.readUnsignedShort();
-        String gpuName = BufferUtils.getString(xteaBuf);
-        String aString = BufferUtils.getString(xteaBuf);
-        String dxVersion = BufferUtils.getString(xteaBuf);
-        String aString1 = BufferUtils.getString(xteaBuf);
+        String gpuName = BufferUtils.getJagString(xteaBuf);
+        String aString = BufferUtils.getJagString(xteaBuf);
+        String dxVersion = BufferUtils.getJagString(xteaBuf);
+        String aString1 = BufferUtils.getJagString(xteaBuf);
         int gpuDriverMonth = xteaBuf.readUnsignedByte();
         int gpuDriverYear = xteaBuf.readUnsignedShort();
-        String cpuType = BufferUtils.getString(xteaBuf);
-        String cpuName = BufferUtils.getString(xteaBuf);
+        String cpuType = BufferUtils.getJagString(xteaBuf);
+        String cpuName = BufferUtils.getJagString(xteaBuf);
         int cpuThreads = xteaBuf.readUnsignedByte();
         int anInt = xteaBuf.readUnsignedByte();
         int anInt1 = xteaBuf.readInt();
@@ -173,8 +177,12 @@ public class LoginDecoder extends ByteToMessageDecoder {
         String aString4 = BufferUtils.getString(xteaBuf);
         int anInt7 = xteaBuf.readUnsignedByte();
 
-        int[] checksums = new int[xteaBuf.readableBytes() / 4];
-        for (int i = 0; i < checksums.length; i++)
-            checksums[i] = xteaBuf.readInt();
+        int[] checksums = new int[(xteaBuf.readableBytes() / 4) + 1];
+        for (int i = 0; i < checksums.length; i++) {
+            if (i == 32)
+                checksums[i] = -1;
+            else
+                checksums[i] = xteaBuf.readInt();
+        }
     }
 }

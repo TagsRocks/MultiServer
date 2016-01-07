@@ -110,6 +110,36 @@ public final class BufferUtils {
 	}
 
     /**
+     * Reads a string from a bytebuffer.
+     * @param buf The bytebuffer.
+     * @return The decoded string.
+     */
+    public static String getJagString(ByteBuffer buf) {
+        StringBuilder bldr = new StringBuilder();
+        byte b;
+        buf.get();
+        while(buf.hasRemaining() && (b = buf.get()) != 0) {
+            bldr.append((char) b);
+        }
+        return bldr.toString();
+    }
+
+    /**
+     * Reads a string from a bytebuf.
+     * @param buf The bytebuf.
+     * @return The decoded string.
+     */
+    public static String getJagString(ByteBuf buf) {
+        StringBuilder bldr = new StringBuilder();
+        byte b;
+        buf.readByte();
+        while(buf.isReadable() && (b = buf.readByte()) != 0) {
+            bldr.append((char) b);
+        }
+        return bldr.toString();
+    }
+
+    /**
      * Reads a string from a bytebuf.
      * @param buf The bytebuf.
      * @return The decoded string.

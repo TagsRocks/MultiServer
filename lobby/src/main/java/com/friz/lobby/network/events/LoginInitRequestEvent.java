@@ -18,10 +18,12 @@
 
 package com.friz.lobby.network.events;
 
+import com.friz.network.event.Event;
+
 /**
  * Created by Kyle Fricilone on 9/24/2015.
  */
-public class LoginInitRequestEvent {
+public class LoginInitRequestEvent implements Event {
 
     private final int type;
 

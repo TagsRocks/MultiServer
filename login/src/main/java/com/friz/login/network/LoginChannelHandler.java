@@ -37,6 +37,7 @@ public class LoginChannelHandler extends SimpleChannelInboundHandler<Event> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("[LoginServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new LoginSessionContext(ctx.channel(), server));
     }
 
