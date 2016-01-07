@@ -21,3 +21,10 @@ You can contact me on Skype at: im_frizzy
 #Legal
 
 This project is released under the GPL v3 License.
+
+#Credits
+Graham
+
+Discarded
+
+Sean
