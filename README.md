@@ -5,9 +5,13 @@ The client being used has been edited so all servers can be ran on the same mach
 
 #Status
 AudioServer - Done
+
 GameServer - Not Yet Started
+
 LobbyServer - In Progress
+
 LoginServer - Not Yet Started
+
 UpdateServer - Done
 
 #Contact
