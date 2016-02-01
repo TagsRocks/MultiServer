@@ -168,7 +168,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
         int anInt2 = xteaBuf.readInt();
         int anInt3 = xteaBuf.readInt();
         int anInt4 = xteaBuf.readInt();
-        String aString2 = BufferUtils.getString(xteaBuf);
+        String aString2 = BufferUtils.getJagString(xteaBuf);
 
         int anInt5 = xteaBuf.readInt();
         String aString3 = BufferUtils.getString(xteaBuf);

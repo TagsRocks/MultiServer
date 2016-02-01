@@ -25,7 +25,7 @@ import java.math.BigInteger;
  */
 public final class Constants {
 
-    public static final String CACHE_LOCATION = System.getProperty("user.home") + "/Desktop/rscd/data_beta/";
+    public static final String CACHE_LOCATION = System.getProperty("user.home") + "/Desktop/rscd/data/";
 
     /**
      * The OnDemand Modulus RSA Key

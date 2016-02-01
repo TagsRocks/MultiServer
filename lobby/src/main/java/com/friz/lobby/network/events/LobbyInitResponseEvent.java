@@ -18,20 +18,18 @@
 
 package com.friz.lobby.network.events;
 
-import com.friz.network.event.Event;
-
 /**
  * Created by Kyle Fricilone on 9/24/2015.
  */
-public class LoginInitRequestEvent implements Event {
+public class LobbyInitResponseEvent {
 
-    private final int type;
+    private final int status;
 
-    public LoginInitRequestEvent(int t) {
-        this.type = t;
+    public LobbyInitResponseEvent(int s) {
+        this.status = s;
     }
 
-    public final int getType() {
-        return type;
+    public final int getStatus() {
+        return status;
     }
 }

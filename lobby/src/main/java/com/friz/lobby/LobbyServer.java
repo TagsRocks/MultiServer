@@ -19,10 +19,12 @@ package com.friz.lobby;
 
 import com.friz.cache.Cache;
 import com.friz.lobby.network.LobbyChannelHandler;
-import com.friz.lobby.network.codec.LoginInitDecoder;
-import com.friz.lobby.network.codec.LoginInitEncoder;
-import com.friz.lobby.network.events.LoginInitRequestEvent;
-import com.friz.lobby.network.listeners.LoginInitEventListener;
+import com.friz.lobby.network.codec.LobbyInitDecoder;
+import com.friz.lobby.network.codec.LobbyInitEncoder;
+import com.friz.lobby.network.events.LobbyInitRequestEvent;
+import com.friz.lobby.network.events.SocialInitRequestMessage;
+import com.friz.lobby.network.listeners.LobbyInitEventListener;
+import com.friz.lobby.network.listeners.SocialInitEventListener;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
@@ -66,8 +68,8 @@ public class LobbyServer extends NetworkServer {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ChannelPipeline p = ch.pipeline();
-                        p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
-                        p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
+                        p.addLast(LobbyInitEncoder.class.getName(), new LobbyInitEncoder());
+                        p.addLast(LobbyInitDecoder.class.getName(), new LobbyInitDecoder());
                         p.addLast(LobbyChannelHandler.class.getName(), new LobbyChannelHandler(s));
                     }
 
@@ -75,7 +77,8 @@ public class LobbyServer extends NetworkServer {
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
 
-        hub.listen(LoginInitRequestEvent.class, new LoginInitEventListener());
+        hub.listen(LobbyInitRequestEvent.class, new LobbyInitEventListener());
+        hub.listen(SocialInitRequestMessage.class, new SocialInitEventListener());
     }
 
     @Override

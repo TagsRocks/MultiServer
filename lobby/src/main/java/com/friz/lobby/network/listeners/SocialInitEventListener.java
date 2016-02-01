@@ -16,20 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.events;
+package com.friz.lobby.network.listeners;
+
+import com.friz.lobby.network.LobbySessionContext;
+import com.friz.lobby.network.codec.*;
+import com.friz.lobby.network.events.LobbyInitRequestEvent;
+import com.friz.lobby.network.events.LobbyInitResponseEvent;
+import com.friz.lobby.network.events.SocialInitRequestMessage;
+import com.friz.network.event.EventListener;
+import io.netty.channel.ChannelFuture;
 
 /**
- * Created by Kyle Fricilone on 9/24/2015.
+ * Created by Kyle Fricilone on 9/18/2015.
  */
-public class LoginInitResponseEvent {
+public class SocialInitEventListener implements EventListener<SocialInitRequestMessage, LobbySessionContext> {
 
-    private final int status;
-
-    public LoginInitResponseEvent(int s) {
-        this.status = s;
-    }
-
-    public final int getStatus() {
-        return status;
+    @Override
+    public void onEvent(SocialInitRequestMessage event, LobbySessionContext context) {
+        context.write(new LobbyInitResponseEvent(0));
+        System.out.println("listen");
     }
 }

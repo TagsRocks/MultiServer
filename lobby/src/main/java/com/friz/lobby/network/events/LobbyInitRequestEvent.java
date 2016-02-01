@@ -16,22 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.codec;
+package com.friz.lobby.network.events;
 
-import com.friz.lobby.network.events.LoginInitRequestEvent;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-
-import java.util.List;
+import com.friz.network.event.Event;
 
 /**
- * Created by Kyle Fricilone on 9/22/2015.
+ * Created by Kyle Fricilone on 9/24/2015.
  */
-public class LoginInitDecoder extends ByteToMessageDecoder {
+public class LobbyInitRequestEvent implements Event {
 
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        out.add(new LoginInitRequestEvent(buf.readUnsignedByte()));
+    private final int type;
+
+    public LobbyInitRequestEvent(int t) {
+        this.type = t;
+    }
+
+    public final int getType() {
+        return type;
     }
 }

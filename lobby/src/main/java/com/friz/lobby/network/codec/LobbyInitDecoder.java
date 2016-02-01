@@ -16,26 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.update.network.listeners;
+package com.friz.lobby.network.codec;
 
-import com.friz.network.event.EventListener;
-import com.friz.update.network.UpdateSessionContext;
-import com.friz.update.network.events.UpdateRequestEvent;
-import com.friz.update.network.events.UpdateResponseEvent;
+import com.friz.lobby.network.events.LobbyInitRequestEvent;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageDecoder;
 
+import java.util.List;
 
 /**
- * Created by Kyle Fricilone on 9/20/2015.
+ * Created by Kyle Fricilone on 9/22/2015.
  */
-public final class UpdateRequestEventListener implements EventListener<UpdateRequestEvent, UpdateSessionContext> {
+public class LobbyInitDecoder extends ByteToMessageDecoder {
 
-	@Override
-	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
-		if (version.getVersion() == 863) {
-			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
-		} else {
-			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);
-		}
-	}
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        out.add(new LobbyInitRequestEvent(buf.readUnsignedByte()));
 
+        if (buf.isReadable())
+            out.add(buf.readBytes(buf.readableBytes()));
+    }
 }

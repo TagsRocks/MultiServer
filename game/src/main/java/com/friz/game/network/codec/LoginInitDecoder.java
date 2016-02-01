@@ -18,7 +18,7 @@
 
 package com.friz.game.network.codec;
 
-import com.friz.lobby.network.events.LoginInitRequestEvent;
+import com.friz.lobby.network.events.LobbyInitRequestEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -32,6 +32,6 @@ public class LoginInitDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        out.add(new LoginInitRequestEvent(buf.readUnsignedByte()));
+        out.add(new LobbyInitRequestEvent(buf.readUnsignedByte()));
     }
 }
