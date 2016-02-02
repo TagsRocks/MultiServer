@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.listeners;
-
-import com.friz.lobby.network.LobbySessionContext;
-import com.friz.lobby.network.events.SocialInitRequestEvent;
-import com.friz.lobby.network.events.SocialInitResponseEvent;
-import com.friz.network.event.EventListener;
+package com.friz.lobby.network.events;
 
 /**
- * Created by Kyle Fricilone on 9/18/2015.
+ * Created by Kyle Fricilone on 9/24/2015.
  */
-public class SocialInitEventListener implements EventListener<SocialInitRequestEvent, LobbySessionContext> {
+public class CreationResponseEvent {
 
-    @Override
-    public void onEvent(SocialInitRequestEvent event, LobbySessionContext context) {
-        context.write(new SocialInitResponseEvent(event.getType(), context.getServer().getHashForChannel(context.getChannel()), event.getKeys()));
+    private final int status;
+
+    public CreationResponseEvent(int s) {
+        this.status = s;
+    }
+
+    public final int getStatus() {
+        return status;
     }
 }

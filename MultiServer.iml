@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/login/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/master/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/network/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/update/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/audio/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/cache/src/test/java" isTestSource="true" />
@@ -20,15 +21,18 @@
       <sourceFolder url="file://$MODULE_DIR$/login/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/master/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/network/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/update/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: io.netty:netty-all:4.0.33.Final" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.google.guava:guava:19.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: io.netty:netty-all:4.0.34.Final" level="project" />
   </component>
 </module>

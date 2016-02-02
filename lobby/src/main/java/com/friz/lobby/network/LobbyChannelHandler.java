@@ -39,11 +39,21 @@ public class LobbyChannelHandler extends SimpleChannelInboundHandler<Event> {
     public void channelActive(ChannelHandlerContext ctx) {
         System.out.println("[LobbyServer] Channel Connected from: " + ctx.channel().remoteAddress().toString());
         ctx.channel().attr(server.getAttr()).set(new LobbySessionContext(ctx.channel(), server));
+        server.getChannels().put(ctx.channel().hashCode(), ctx.channel());
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        server.getChannels().remove(ctx.channel().hashCode());
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
         server.getHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
-        System.out.println(msg);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+
     }
 }

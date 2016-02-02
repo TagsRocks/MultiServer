@@ -19,6 +19,8 @@
 package com.friz.lobby.network.listeners;
 
 import com.friz.lobby.network.LobbySessionContext;
+import com.friz.lobby.network.events.CreationRequestEvent;
+import com.friz.lobby.network.events.CreationResponseEvent;
 import com.friz.lobby.network.events.SocialInitRequestEvent;
 import com.friz.lobby.network.events.SocialInitResponseEvent;
 import com.friz.network.event.EventListener;
@@ -26,10 +28,10 @@ import com.friz.network.event.EventListener;
 /**
  * Created by Kyle Fricilone on 9/18/2015.
  */
-public class SocialInitEventListener implements EventListener<SocialInitRequestEvent, LobbySessionContext> {
+public class CreationEventListener implements EventListener<CreationRequestEvent, LobbySessionContext> {
 
     @Override
-    public void onEvent(SocialInitRequestEvent event, LobbySessionContext context) {
-        context.write(new SocialInitResponseEvent(event.getType(), context.getServer().getHashForChannel(context.getChannel()), event.getKeys()));
+    public void onEvent(CreationRequestEvent event, LobbySessionContext context) {
+        context.write(new CreationResponseEvent(2));
     }
 }

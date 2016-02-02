@@ -1,6 +1,6 @@
 package com.friz.lobby.network.codec;
 
-import com.friz.lobby.network.events.SocialInitRequestMessage;
+import com.friz.lobby.network.events.SocialInitRequestEvent;
 import com.friz.network.Constants;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -35,7 +35,7 @@ public class SocialInitDecoder extends ByteToMessageDecoder {
         for (int i = 0; i < key.length; i++)
             key[i] = rsaBuf.readInt();
 
-        int aByte = rsaBuf.readUnsignedByte();
+        int type = rsaBuf.readUnsignedByte();
         int aByte1 = rsaBuf.readUnsignedByte();
         int anInt = rsaBuf.readInt();
 
@@ -47,7 +47,7 @@ public class SocialInitDecoder extends ByteToMessageDecoder {
         int aByte2 = rsaBuf.readUnsignedByte();
         int aByte3 = rsaBuf.readUnsignedByte();
 
-        out.add(new SocialInitRequestMessage(0));
+        out.add(new SocialInitRequestEvent(type, key));
     }
 
 }

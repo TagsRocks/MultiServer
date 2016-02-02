@@ -1,5 +1,6 @@
 package com.friz.lobby.network.codec;
 
+import com.friz.lobby.network.events.CreationRequestEvent;
 import com.friz.network.Constants;
 import com.friz.network.utility.BufferUtils;
 import com.friz.network.utility.XTEA;
@@ -91,7 +92,8 @@ public class CreationDecoder extends ByteToMessageDecoder {
         int anInt6 = xteaBuf.readInt();
         int anInt7 = xteaBuf.readInt();
         String aString2 = BufferUtils.getJagString(xteaBuf);
-        System.out.println(seed);
+
+        out.add(new CreationRequestEvent(key));
     }
 
 }

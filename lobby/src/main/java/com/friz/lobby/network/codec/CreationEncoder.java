@@ -16,22 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.events;
+package com.friz.lobby.network.codec;
 
-import com.friz.network.event.Event;
+import com.friz.lobby.network.events.CreationResponseEvent;
+import com.friz.lobby.network.events.LobbyInitResponseEvent;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * Created by Kyle Fricilone on 9/24/2015.
+ * Created by Kyle Fricilone on 9/22/2015.
  */
-public class SocialInitRequestMessage implements Event {
+public class CreationEncoder extends MessageToByteEncoder<CreationResponseEvent> {
 
-    private final int type;
-
-    public SocialInitRequestMessage(int t) {
-        this.type = t;
-    }
-
-    public final int getType() {
-        return type;
+    @Override
+    protected void encode(ChannelHandlerContext ctx, CreationResponseEvent msg, ByteBuf buf) throws Exception {
+        buf.writeByte(msg.getStatus());
     }
 }

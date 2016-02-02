@@ -18,6 +18,9 @@
 
 package com.friz.network.event;
 
+import com.friz.network.event.impl.RecycleEvent;
+import com.friz.network.event.impl.RecycleEventListener;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +32,10 @@ import java.util.Map;
 public class EventHub {
 
     private final Map<Class<?>, List<EventListener<?, ?>>> listenerMap = new HashMap<>();
+
+    public EventHub() {
+        listen(RecycleEvent.class, new RecycleEventListener());
+    }
 
     public void listen(Class<? extends Event> c, EventListener<?, ?> l) {
         List<EventListener<?, ?>> listeners = listenerMap.get(c);

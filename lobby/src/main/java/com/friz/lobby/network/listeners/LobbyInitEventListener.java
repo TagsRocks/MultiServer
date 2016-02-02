@@ -44,12 +44,17 @@ public class LobbyInitEventListener implements EventListener<LobbyInitRequestEve
         } else if (event.getType() == 28) {
             context.getChannel().pipeline().remove(LobbyInitDecoder.class.getName());
             context.getChannel().pipeline().remove(LobbyInitEncoder.class.getName());
-            context.getChannel().pipeline().addLast(CreationDecoder.class.getName(), new CreationDecoder());
+            context.getChannel().pipeline().addFirst(CreationDecoder.class.getName(), new CreationDecoder());
+            context.getChannel().pipeline().addFirst(CreationEncoder.class.getName(), new CreationEncoder());
         } else if (event.getType() == 29) {
-            context.getChannel().pipeline().remove(LobbyInitDecoder.class.getName());
-            context.getChannel().pipeline().remove(LobbyInitEncoder.class.getName());
-            context.getChannel().pipeline().addLast(SocialInitEncoder.class.getName(), new SocialInitEncoder());
-            context.getChannel().pipeline().addLast(SocialInitDecoder.class.getName(), new SocialInitDecoder());
+            context.write(new LobbyInitResponseEvent(0)).addListener((ChannelFuture future) -> {
+                if (future.isSuccess()) {
+                    context.getChannel().pipeline().remove(LobbyInitDecoder.class.getName());
+                    context.getChannel().pipeline().remove(LobbyInitEncoder.class.getName());
+                    context.getChannel().pipeline().addFirst(SocialInitDecoder.class.getName(), new SocialInitDecoder());
+                    context.getChannel().pipeline().addFirst(SocialInitEncoder.class.getName(), new SocialInitEncoder());
+                }
+            });
         }
     }
 }

@@ -19,6 +19,7 @@
 package com.friz.lobby.network.codec;
 
 import com.friz.lobby.network.events.LobbyInitRequestEvent;
+import com.friz.network.event.impl.RecycleEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -35,6 +36,6 @@ public class LobbyInitDecoder extends ByteToMessageDecoder {
         out.add(new LobbyInitRequestEvent(buf.readUnsignedByte()));
 
         if (buf.isReadable())
-            out.add(buf.readBytes(buf.readableBytes()));
+            out.add(new RecycleEvent(buf.readBytes(buf.readableBytes())));
     }
 }

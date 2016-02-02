@@ -21,14 +21,17 @@ import com.friz.cache.Cache;
 import com.friz.lobby.network.LobbyChannelHandler;
 import com.friz.lobby.network.codec.LobbyInitDecoder;
 import com.friz.lobby.network.codec.LobbyInitEncoder;
+import com.friz.lobby.network.events.CreationRequestEvent;
 import com.friz.lobby.network.events.LobbyInitRequestEvent;
-import com.friz.lobby.network.events.SocialInitRequestMessage;
+import com.friz.lobby.network.events.SocialInitRequestEvent;
+import com.friz.lobby.network.listeners.CreationEventListener;
 import com.friz.lobby.network.listeners.LobbyInitEventListener;
 import com.friz.lobby.network.listeners.SocialInitEventListener;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -38,6 +41,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by Kyle Fricilone on 9/22/2015.
@@ -48,6 +55,8 @@ public class LobbyServer extends NetworkServer {
 
     private final EventHub hub = new EventHub();
     private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("lobby-attribute-key");
+
+    private final ConcurrentMap<Integer, Channel> channels = new ConcurrentHashMap<>();
 
     public LobbyServer(Cache c) {
         this.cache = c;
@@ -78,7 +87,8 @@ public class LobbyServer extends NetworkServer {
                 .childOption(ChannelOption.TCP_NODELAY, true);
 
         hub.listen(LobbyInitRequestEvent.class, new LobbyInitEventListener());
-        hub.listen(SocialInitRequestMessage.class, new SocialInitEventListener());
+        hub.listen(SocialInitRequestEvent.class, new SocialInitEventListener());
+        hub.listen(CreationRequestEvent.class, new CreationEventListener());
     }
 
     @Override
@@ -103,11 +113,23 @@ public class LobbyServer extends NetworkServer {
         return cache;
     }
 
-    public EventHub getHub() {
+    public final EventHub getHub() {
         return hub;
     }
 
-    public AttributeKey<SessionContext> getAttr() {
+    public final AttributeKey<SessionContext> getAttr() {
         return attr;
+    }
+
+    public final ConcurrentMap<Integer, Channel> getChannels() { return channels; }
+
+    public final int getHashForChannel(Channel c) {
+        if (channels.containsValue(c)) {
+            for (Map.Entry<Integer, Channel> entry : channels.entrySet()) {
+                if (entry.getValue().equals(c))
+                    return entry.getKey();
+            }
+        }
+        return -1;
     }
 }
