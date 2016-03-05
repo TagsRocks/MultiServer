@@ -18,7 +18,6 @@
 
 package com.friz.master;
 
-import com.friz.audio.AudioServer;
 import com.friz.cache.Cache;
 import com.friz.cache.FileStore;
 import com.friz.game.GameServer;
@@ -43,11 +42,6 @@ public class MasterServer {
         updateServer.initialize();
         updateServer.bind();
         System.out.println("UpdateServer initialized on: " + updateServer.getAddress());
-
-        AudioServer audioServer = new AudioServer(cache);
-        audioServer.initialize();
-        audioServer.bind();
-        System.out.println("AudioServer initialized on: " + audioServer.getAddress());
 
         LoginServer loginServer = new LoginServer();
         loginServer.initialize();
@@ -75,7 +69,6 @@ public class MasterServer {
                     e.printStackTrace();
                 } finally {
                     updateServer.stop();
-                    audioServer.stop();
                     loginServer.stop();
                     gameServer.stop();
                 }
