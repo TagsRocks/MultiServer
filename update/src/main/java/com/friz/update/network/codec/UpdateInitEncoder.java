@@ -31,8 +31,7 @@ public class UpdateInitEncoder extends MessageToByteEncoder<UpdateResponseEvent>
     /**
      * Delta integers for the loading screen percentages.
      */
-    public static final int[] PERCENT_DELTA = { 2669,69795,41651,35866,358716,44375,18239,20677,169903,1095188,425011,554838,814467,1150563,34870,820648,13,20549,1244,65358,2109,119,1351461,4173641,8991,23087 };
-
+    public static final int[] PERCENT_DELTA = { 3264,69795,41651,35866,358716,44375,18239,20836,177863,1096567,429391,556463,834655,1154849,35059,825361,974,20622,1244,65946,2153,119,1359528,4234361,8991,23087 };
 
     @Override
     protected void encode(ChannelHandlerContext ctx, UpdateResponseEvent msg, ByteBuf out) throws Exception {

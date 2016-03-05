@@ -17,6 +17,9 @@ public class SocialInitDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        if (!buf.isReadable())
+            return;
+
         int size = buf.readUnsignedShort();
         if (!buf.isReadable(size))
             return;
@@ -36,15 +39,15 @@ public class SocialInitDecoder extends ByteToMessageDecoder {
             key[i] = rsaBuf.readInt();
 
         int type = rsaBuf.readUnsignedByte();
-        int aByte1 = rsaBuf.readUnsignedByte();
+        int lang = rsaBuf.readUnsignedByte();
         int anInt = rsaBuf.readInt();
 
         int[] ints = new int[5];
         for (int i = 0; i < ints.length; i++)
             ints[i] = rsaBuf.readInt();
 
-        long aLong = rsaBuf.readLong();
-        int aByte2 = rsaBuf.readUnsignedByte();
+        long clientKey = rsaBuf.readLong();
+        int game = rsaBuf.readUnsignedByte();
         int aByte3 = rsaBuf.readUnsignedByte();
 
         out.add(new SocialInitRequestEvent(type, key));

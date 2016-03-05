@@ -21,19 +21,26 @@ package com.friz.lobby.network.codec;
 import com.friz.network.Constants;
 import com.friz.network.utility.BufferUtils;
 import com.friz.network.utility.XTEA;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Kyle Fricilone on 9/22/2015.
  */
-public class LoginDecoder extends ByteToMessageDecoder {
+public class SocialDecoder extends ByteToMessageDecoder {
+
+    private final int[] key;
+
+    public SocialDecoder(int[] key) {
+        this.key = key;
+        System.out.println(Arrays.toString(key));
+    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
@@ -46,47 +53,9 @@ public class LoginDecoder extends ByteToMessageDecoder {
         if (!buf.isReadable(size))
             return;
 
-        int major = buf.readInt();
-        int minor = buf.readInt();
-
-        int rsaSize = buf.readUnsignedShort();
-        byte[] rsa = new byte[rsaSize];
-        buf.readBytes(rsa);
-
-        ByteBuf rsaBuf = Unpooled.wrappedBuffer(new BigInteger(rsa).modPow(Constants.LOGIN_EXPONENT, Constants.LOGIN_MODULUS).toByteArray());
-        int rsaMagic = rsaBuf.readUnsignedByte();
-
-        int[] key = new int[4];
-        for (int i = 0; i < key.length; i++)
-            key[i] = rsaBuf.readInt();
-
-        int block = rsaBuf.readUnsignedByte();
-
-        if (block == 1 || block == 3) {
-            int code = rsaBuf.readUnsignedMedium();
-            rsaBuf.readerIndex(rsaBuf.readerIndex() + 1);
-            System.out.println(new GoogleAuthenticator().authorize("OE2ZSYF6T7N2R5CG", code));
-        } else if (block == 0) {
-            int trusted = rsaBuf.readInt();
-        } else if (block == 2) {
-            rsaBuf.readerIndex(rsaBuf.readerIndex() + 4);
-        }
-
-        String password = BufferUtils.getString(rsaBuf);
-
-        long serverKey = rsaBuf.readLong();
-        long clientKey = rsaBuf.readLong();
-
-        byte[] xtea = new byte[buf.readableBytes()];
+        byte[] xtea = new byte[size];
         buf.readBytes(xtea);
         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
-
-        String username = "";
-        boolean asString = xteaBuf.readBoolean();
-        if (asString)
-            username = BufferUtils.getString(xteaBuf);
-        else
-            username = BufferUtils.getBase37(xteaBuf);
 
         int game = xteaBuf.readUnsignedByte();
         int lang = xteaBuf.readUnsignedByte();
@@ -100,7 +69,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
         for (int i = 0; i < uid.length; i++)
             uid[i] = xteaBuf.readByte();
 
-        String token = BufferUtils.getString(xteaBuf);
+        String gameToken = BufferUtils.getString(xteaBuf);
 
         int prefSize = xteaBuf.readUnsignedByte();
         int prefVersion = xteaBuf.readUnsignedByte();
@@ -145,6 +114,8 @@ public class LoginDecoder extends ByteToMessageDecoder {
         int musicVolume = xteaBuf.readUnsignedByte();
         int themeMusicVolume = xteaBuf.readUnsignedByte();
         int steroSound = xteaBuf.readUnsignedByte();
+        xteaBuf.readMedium();
+        xteaBuf.readMedium();
 
         int infoVersion = xteaBuf.readUnsignedByte();
         int osType = xteaBuf.readUnsignedByte();
@@ -176,10 +147,10 @@ public class LoginDecoder extends ByteToMessageDecoder {
         String aString2 = BufferUtils.getJagString(xteaBuf);
 
         int anInt5 = xteaBuf.readInt();
-        String aString3 = BufferUtils.getString(xteaBuf);
+        String seed = BufferUtils.getString(xteaBuf);
         int affiliate = xteaBuf.readInt();
         int anInt6 = xteaBuf.readInt();
-        String aString4 = BufferUtils.getString(xteaBuf);
+        String updateToken = BufferUtils.getString(xteaBuf);
         int anInt7 = xteaBuf.readUnsignedByte();
 
         int[] checksums = new int[(xteaBuf.readableBytes() / 4) + 1];
@@ -189,6 +160,7 @@ public class LoginDecoder extends ByteToMessageDecoder {
             else
                 checksums[i] = xteaBuf.readInt();
         }
-        ctx.channel().writeAndFlush(Unpooled.buffer().writeByte(56));
+
+        System.out.println(seed);
     }
 }

@@ -120,15 +120,15 @@ public class ChecksumTable {
 			ByteBuffer temp = ByteBuffer.wrap(bytes);
 
 			if (modulus != null && publicKey != null) {
-				temp = Rsa.crypt(buffer, modulus, publicKey);
+				temp = Rsa.crypt(temp, modulus, publicKey);
 			}
 
 			if (temp.limit() != 65)
-				throw new IOException("Decrypted data is not 65 bytes long");
+				throw new IOException("Decrypted data is not 65 bytes long. [ " + temp.limit() + " ]");
 
 			for (int i = 0; i < 64; i++) {
 				if (temp.get(i + 1) != masterDigest[i])
-					throw new IOException("Whirlpool digest mismatch");
+					throw new IOException("Whirlpool digest mismatch. [ " + temp.get(i + 1) + ", " + masterDigest[i] + " ]");
 			}
 		}
 

@@ -18,7 +18,6 @@
 
 package com.friz.update.network.codec;
 
-import com.friz.cache.Sector;
 import com.friz.update.network.events.FileResponseEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,21 +28,19 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent> {
 
+	/**
+	 * The size of a block in bytes
+	 */
+	private static final int BLOCK_SIZE = 102400;
 	
 	/**
-	 * The remaining bytes after the header.
+	 * The remaining bytes after the block header.
 	 */
-	private static final int BYTES_REMAINING_AFTER_HEADER = Sector.DATA_SIZE - 6;
-	
-	/**
-	 * The remaining bytes after the block.
-	 */
-	private static final int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
+	private static final int BYTES_AFTER_HEADER = BLOCK_SIZE - 5;
 
     @Override
 	protected void encode(ChannelHandlerContext ctx, FileResponseEvent msg, ByteBuf buffer) throws Exception {
 		ByteBuf container = msg.getContainer();
-		int compression = container.readUnsignedByte();
 		int type = msg.getType();
 		int file = msg.getFile();
 
@@ -52,11 +49,10 @@ public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent>
 			
 		buffer.writeByte(type);
 		buffer.writeInt(file);
-		buffer.writeByte(compression);
 			
 		int bytes = container.readableBytes();
-		if (bytes > BYTES_REMAINING_AFTER_HEADER)
-			bytes = BYTES_REMAINING_AFTER_HEADER;
+		if (bytes > BYTES_AFTER_HEADER)
+			bytes = BYTES_AFTER_HEADER;
 
 		buffer.writeBytes(container.readBytes(bytes));
 
@@ -64,8 +60,8 @@ public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent>
 			bytes = container.readableBytes();
 			if (bytes == 0)
 				break;
-			else if (bytes > BYTES_REMAINING_AFTER_BLOCK)
-				bytes = BYTES_REMAINING_AFTER_BLOCK;
+			else if (bytes > BYTES_AFTER_HEADER)
+				bytes = BYTES_AFTER_HEADER;
 
 			buffer.writeByte(type);
 			buffer.writeInt(file);

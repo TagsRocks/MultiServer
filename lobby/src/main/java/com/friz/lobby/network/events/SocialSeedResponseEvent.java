@@ -16,29 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.codec;
-
-import com.friz.lobby.network.events.LobbyInitRequestEvent;
-import com.friz.network.event.impl.RecycleEvent;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-
-import java.util.List;
+package com.friz.lobby.network.events;
 
 /**
- * Created by Kyle Fricilone on 9/22/2015.
+ * Created by Kyle Fricilone on 9/24/2015.
  */
-public class LobbyInitDecoder extends ByteToMessageDecoder {
+public class SocialSeedResponseEvent {
 
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        if (!buf.isReadable())
-            return;
+    private final int[] keys;
 
-        out.add(new LobbyInitRequestEvent(buf.readUnsignedByte()));
+    public SocialSeedResponseEvent(int[] keys) {
+        this.keys = keys;
+    }
 
-        if (buf.isReadable())
-            out.add(new RecycleEvent(buf.readBytes(buf.readableBytes())));
+    public final int[] getKeys() {
+        return keys;
     }
 }

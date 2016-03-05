@@ -19,6 +19,9 @@ public class CreationDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+        if (!buf.isReadable())
+            return;
+
         int size = buf.readUnsignedShort();
         if (!buf.isReadable(size))
             return;

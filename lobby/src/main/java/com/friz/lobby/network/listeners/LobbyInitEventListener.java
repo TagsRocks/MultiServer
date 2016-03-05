@@ -53,6 +53,7 @@ public class LobbyInitEventListener implements EventListener<LobbyInitRequestEve
                     context.getChannel().pipeline().remove(LobbyInitEncoder.class.getName());
                     context.getChannel().pipeline().addFirst(SocialInitDecoder.class.getName(), new SocialInitDecoder());
                     context.getChannel().pipeline().addFirst(SocialInitEncoder.class.getName(), new SocialInitEncoder());
+                    context.getChannel().pipeline().addFirst(SocialSeedEncoder.class.getName(), new SocialSeedEncoder());
                 }
             });
         }

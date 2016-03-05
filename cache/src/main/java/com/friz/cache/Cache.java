@@ -26,6 +26,7 @@ import com.friz.network.Constants;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,6 +77,13 @@ public final class Cache implements Closeable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		try {
+			Container c = Container.decode(checksum);
+			ChecksumTable t = ChecksumTable.decode(c.getData(), true, Constants.ONDEMAND_MODULUS, new BigInteger("65537"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        checksum.position(0);
 	}
 
 	public final ByteBuffer getChecksum() {
