@@ -77,13 +77,6 @@ public final class Cache implements Closeable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		try {
-			Container c = Container.decode(checksum);
-			ChecksumTable t = ChecksumTable.decode(c.getData(), true, Constants.ONDEMAND_MODULUS, new BigInteger("65537"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        checksum.position(0);
 	}
 
 	public final ByteBuffer getChecksum() {

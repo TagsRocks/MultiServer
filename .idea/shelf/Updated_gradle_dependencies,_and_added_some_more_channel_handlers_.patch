@@ -1,0 +1,3423 @@
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/BlockInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/BlockInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/BlockInputStream.java	(revision )
+@@ -9,15 +9,15 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-import java.io.DataInputStream;
++import com.friz.cache.utility.tukaani.check.Check;
++import com.friz.cache.utility.tukaani.common.DecoderUtil;
++
+ import java.io.ByteArrayInputStream;
++import java.io.DataInputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ import java.util.Arrays;
+ 
+-import com.friz.cache.utility.tukaani.common.DecoderUtil;
+-import com.friz.cache.utility.tukaani.check.Check;
+-
+ class BlockInputStream extends InputStream {
+     private final DataInputStream inData;
+     private final CountingInputStream inCounted;
+@@ -54,7 +54,7 @@
+         inData.readFully(buf, 1, headerSize - 1);
+ 
+         // Validate the CRC32.
+-        if (!DecoderUtil.isCRC32Valid(buf, 0, headerSize - 4, headerSize - 4))
++        if (DecoderUtil.isCRC32Invalid(buf, 0, headerSize - 4, headerSize - 4))
+             throw new CorruptedInputException("XZ Block Header is corrupt");
+ 
+         // Check for reserved bits in Block Flags.
+Index: network/src/main/java/com/friz/network/Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- network/src/main/java/com/friz/network/Constants.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ network/src/main/java/com/friz/network/Constants.java	(revision )
+@@ -25,7 +25,7 @@
+  */
+ public final class Constants {
+ 
+-    public static final String CACHE_LOCATION = new String(System.getProperty("user.home") + "/Desktop/rscd/data_beta/");
++    public static final String CACHE_LOCATION = System.getProperty("user.home") + "/Desktop/rscd/data_beta/";
+ 
+     public static final BigInteger ONDEMAND_MODULUS = new BigInteger("24627451000224346879895057235540463603318681867887301698139000184607941681199832120835939568834683424494661001639540576110294901407135542190258196976162588998764371137729355835759240800896952053087848593323328083765118055340680515724988840818579455903291455768325914844783396535248352682327938970625570390857514421123934359634113432131240146730428791991574993523186611928712663087500263211640757247678868169756389285727902981819809647913547411426453023764159881390121833599258796047977864986663688529527328782704971404852096696443229732347340335632605988826402864855934548150199214235215430594741267566772984918508429");
+     public static final BigInteger ONDEMAND_EXPONENT = new BigInteger("4944128855607545842787727055678561417655124545459713267961835687152092538559076418112493048310998822284759064323533810822636831374852103828329448977148346483005673605125427388056888951544947101064693592052657698675521587105258610332997820752400169390109490570881548768067124650415224624889584403261068245914646265957614936797742201707565865463866458914308199538991360321614226330003175368403966163168108776526415184677868468578309094321369625043982679132216307938034269876009891416384239712192376705334096914507706277849817945621737312364626624746577154471022143875792315448578511340130074297900116153223090884973633");
+Index: audio/src/main/java/com/friz/audio/network/listeners/AudioRequestEventListener.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- audio/src/main/java/com/friz/audio/network/listeners/AudioRequestEventListener.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ audio/src/main/java/com/friz/audio/network/listeners/AudioRequestEventListener.java	(revision )
+@@ -22,11 +22,8 @@
+ import com.friz.audio.network.events.AudioRequestEvent;
+ import com.friz.audio.network.events.FileRequestEvent;
+ import com.friz.network.event.EventListener;
+-import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.Unpooled;
+-import io.netty.handler.codec.http.*;
++import io.netty.handler.codec.http.QueryStringDecoder;
+ 
+-import java.io.IOException;
+ import java.util.Deque;
+ 
+ /**
+@@ -55,7 +52,7 @@
+             queue.add(new FileRequestEvent(type, file, crc, version, event.getRequest().getProtocolVersion()));
+             if (context.isIdle()) {
+                 context.addContextToService();
+-                context.setIdle(false);
++                context.setIdle();
+             }
+         }
+     }
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMADecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMADecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMADecoder.java	(revision )
+@@ -10,10 +10,10 @@
+ 
+ package com.friz.cache.utility.tukaani.lzma;
+ 
+-import java.io.IOException;
+-
+-import com.friz.cache.utility.tukaani.rangecoder.RangeDecoder;
+ import com.friz.cache.utility.tukaani.lz.LZDecoder;
++import com.friz.cache.utility.tukaani.rangecoder.RangeDecoder;
++
++import java.io.IOException;
+ 
+ public final class LZMADecoder extends LZMACoder {
+     private final LZDecoder lz;
+Index: lobby/src/main/java/com/friz/lobby/network/LobbyChannelHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- lobby/src/main/java/com/friz/lobby/network/LobbyChannelHandler.java	(revision )
++++ lobby/src/main/java/com/friz/lobby/network/LobbyChannelHandler.java	(revision )
+@@ -0,0 +1,47 @@
++/*
++ * MultiServer - Multiple Server Communication Application
++ * Copyright (C) 2015 Kyle Fricilone
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++package com.friz.lobby.network;
++
++import com.friz.lobby.LobbyServer;
++import com.friz.network.event.Event;
++import com.friz.network.event.EventLink;
++import io.netty.channel.ChannelHandlerContext;
++import io.netty.channel.SimpleChannelInboundHandler;
++
++/**
++ * Created by Kyle Fricilone on 1/4/2016.
++ */
++public class LobbyChannelHandler extends SimpleChannelInboundHandler<Event> {
++
++    private final LobbyServer server;
++
++    public LobbyChannelHandler(LobbyServer s) {
++        this.server = s;
++    }
++
++    @Override
++    public void channelActive(ChannelHandlerContext ctx) {
++        ctx.channel().attr(server.getAttr()).set(new LobbySessionContext(ctx.channel(), server));
++    }
++
++    @Override
++    protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
++        server.getHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
++    }
++}
+Index: .idea/copyright/profiles_settings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/copyright/profiles_settings.xml	(revision )
++++ .idea/copyright/profiles_settings.xml	(revision )
+@@ -0,0 +1,7 @@
++<component name="CopyrightManager">
++  <settings default="GPL">
++    <module2copyright>
++      <element module="All" copyright="GPL" />
++    </module2copyright>
++  </settings>
++</component>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexHash.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexHash.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexHash.java	(revision )
+@@ -9,19 +9,19 @@
+ 
+ package com.friz.cache.utility.tukaani.index;
+ 
+-import java.io.InputStream;
+-import java.io.DataInputStream;
+-import java.io.IOException;
+-import java.nio.ByteBuffer;
+-import java.util.Arrays;
+-import java.util.zip.CheckedInputStream;
+-
+ import com.friz.cache.utility.tukaani.CorruptedInputException;
+ import com.friz.cache.utility.tukaani.XZIOException;
+ import com.friz.cache.utility.tukaani.check.CRC32;
+ import com.friz.cache.utility.tukaani.check.Check;
+ import com.friz.cache.utility.tukaani.check.SHA256;
+ import com.friz.cache.utility.tukaani.common.DecoderUtil;
++
++import java.io.DataInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.nio.ByteBuffer;
++import java.util.Arrays;
++import java.util.zip.CheckedInputStream;
+ 
+ public class IndexHash extends IndexBase {
+     private Check hash;
+Index: cache/src/main/java/com/friz/cache/utility/crypto/Whirlpool.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/crypto/Whirlpool.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/crypto/Whirlpool.java	(revision )
+@@ -167,15 +167,14 @@
+         }
+     }
+ 
+-	public static byte[] whirlpool(byte[] data, int off, int len) {
++	public static byte[] whirlpool(byte[] data, int len) {
+ 		byte source[];
+-		if(off <= 0) {
++		if(0 <= 0) {
+ 			source = data;
+ 		} else {
+ 			source = new byte[len];
+-			for(int i = 0; i < len; i++)
+-				source[i] = data[off + i];
++            System.arraycopy(data, 0, source, 0, len);
+-			}
++        }
+ 		Whirlpool whirlpool = new Whirlpool();
+ 		whirlpool.NESSIEinit();
+ 		whirlpool.NESSIEadd(source, len * 8);
+@@ -405,9 +404,7 @@
+                     L[i] ^= C[t][(int)(K[(i - t) & 7] >>> s) & 0xff];
+                 }
+             }
+-            for (int i = 0; i < 8; i++) {
+-                K[i] = L[i];
+-            }
++            System.arraycopy(L, 0, K, 0, 8);
+             K[0] ^= rc[r];
+             /*
+              * apply the r-th round transformation:
+@@ -418,9 +415,7 @@
+                     L[i] ^= C[t][(int)(state[(i - t) & 7] >>> s) & 0xff];
+                 }
+             }
+-            for (int i = 0; i < 8; i++) {
+-                state[i] = L[i];
+-            }
++            System.arraycopy(L, 0, state, 0, 8);
+         }
+         /*
+          * apply the Miyaguchi-Preneel compression function:
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/check/Check.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/check/Check.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/check/Check.java	(revision )
+@@ -46,7 +46,7 @@
+             case XZ.CHECK_SHA256:
+                 try {
+                     return new SHA256();
+-                } catch (java.security.NoSuchAlgorithmException e) {}
++                } catch (java.security.NoSuchAlgorithmException ignored) {}
+ 
+                 break;
+         }
+Index: cache/src/main/java/com/friz/cache/tools/CacheDefragmenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/tools/CacheDefragmenter.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/tools/CacheDefragmenter.java	(revision )
+@@ -18,20 +18,20 @@
+ 
+ package com.friz.cache.tools;
+ 
+-import java.io.IOException;
+-import java.nio.ByteBuffer;
+-import java.util.concurrent.TimeUnit;
+-
++import com.friz.cache.Container;
+ import com.friz.cache.FileStore;
+ import com.friz.cache.ReferenceTable;
+-import com.friz.cache.Container;
+ import com.friz.network.Constants;
+ 
+-public final class CacheDefragmenter {
++import java.io.IOException;
++import java.nio.ByteBuffer;
++import java.util.concurrent.TimeUnit;
+ 
++final class CacheDefragmenter {
++
+ 	public static void main(String[] args) throws IOException {
+ 		long start = System.currentTimeMillis();
+-		try (FileStore in = FileStore.open(Constants.CACHE_LOCATION)) {
++		try (FileStore in = FileStore.open()) {
+ 			try (FileStore out = FileStore.create(Constants.CACHE_LOCATION + "-tmp/", in.getTypeCount())) {
+ 				for (int type = 0; type < in.getTypeCount(); type++) {
+ 
+Index: lobby/src/main/java/com/friz/lobby/network/LobbySessionContext.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- lobby/src/main/java/com/friz/lobby/network/LobbySessionContext.java	(revision )
++++ lobby/src/main/java/com/friz/lobby/network/LobbySessionContext.java	(revision )
+@@ -0,0 +1,34 @@
++/*
++ * MultiServer - Multiple Server Communication Application
++ * Copyright (C) 2015 Kyle Fricilone
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++package com.friz.lobby.network;
++
++import com.friz.lobby.LobbyServer;
++import com.friz.network.SessionContext;
++import io.netty.channel.Channel;
++
++/**
++ * Created by Kyle Fricilone on 1/4/2016.
++ */
++public class LobbySessionContext extends SessionContext<LobbyServer> {
++
++    public LobbySessionContext(Channel c, LobbyServer lobbyServer) {
++        super(c, lobbyServer);
++    }
++
++}
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision )
++++ .idea/gradle.xml	(revision )
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="distributionType" value="DEFAULT_WRAPPED" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="gradleJvm" value="1.8" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++          </set>
++        </option>
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/IA64.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/IA64.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/IA64.java	(revision )
+@@ -20,8 +20,8 @@
+     private final boolean isEncoder;
+     private int pos;
+ 
+-    public IA64(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public IA64(int startPos) {
++        this.isEncoder = false;
+         pos = startPos;
+     }
+ 
+Index: audio/src/main/java/com/friz/audio/AudioServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- audio/src/main/java/com/friz/audio/AudioServer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ audio/src/main/java/com/friz/audio/AudioServer.java	(revision )
+@@ -33,8 +33,6 @@
+ import io.netty.channel.socket.nio.NioSocketChannel;
+ import io.netty.handler.codec.http.HttpObjectAggregator;
+ import io.netty.handler.codec.http.HttpServerCodec;
+-import io.netty.handler.logging.LogLevel;
+-import io.netty.handler.logging.LoggingHandler;
+ import io.netty.handler.stream.ChunkedWriteHandler;
+ import io.netty.util.AttributeKey;
+ 
+@@ -63,7 +61,7 @@
+ 
+         bootstrap.group(group)
+                 .channel(NioServerSocketChannel.class)
+-                .handler(new LoggingHandler(LogLevel.INFO))
++                //.handler(new LoggingHandler(LogLevel.INFO))
+                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
+ 
+                     @Override
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromBuffer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromBuffer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromBuffer.java	(revision )
+@@ -10,11 +10,11 @@
+ 
+ package com.friz.cache.utility.tukaani.rangecoder;
+ 
++import com.friz.cache.utility.tukaani.CorruptedInputException;
++
+ import java.io.DataInputStream;
+ import java.io.IOException;
+ 
+-import com.friz.cache.utility.tukaani.CorruptedInputException;
+-
+ public final class RangeDecoderFromBuffer extends RangeDecoder {
+     private static final int INIT_SIZE = 5;
+ 
+@@ -22,8 +22,8 @@
+     private int pos = 0;
+     private int end = 0;
+ 
+-    public RangeDecoderFromBuffer(int inputSizeMax) {
+-        buf = new byte[inputSizeMax - INIT_SIZE];
++    public RangeDecoderFromBuffer() {
++        buf = new byte[com.friz.cache.utility.tukaani.LZMA2InputStream.COMPRESSED_SIZE_MAX - INIT_SIZE];
+     }
+ 
+     public void prepareInputBuffer(DataInputStream in, int len)
+Index: MultiServer.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- MultiServer.iml	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ MultiServer.iml	(revision )
+@@ -5,47 +5,48 @@
+     <output-test url="file://$MODULE_DIR$/build/classes/test" />
+     <exclude-output />
+     <content url="file://$MODULE_DIR$">
++      <sourceFolder url="file://$MODULE_DIR$/audio/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/audio/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/audio/src/test/java" isTestSource="true" />
++      <sourceFolder url="file://$MODULE_DIR$/audio/src/test/resources" type="java-test-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/cache/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/cache/src/test/java" isTestSource="true" />
++      <sourceFolder url="file://$MODULE_DIR$/cache/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/cache/src/test/resources" type="java-test-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/game/src/main/java" isTestSource="false" />
+       <sourceFolder url="file://$MODULE_DIR$/game/src/main/resources" type="java-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/game/src/test/java" isTestSource="true" />
++      <sourceFolder url="file://$MODULE_DIR$/game/src/test/resources" type="java-test-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/java" isTestSource="true" />
++      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/resources" type="java-test-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/login/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/login/src/main/resources" type="java-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/login/src/test/java" isTestSource="true" />
++      <sourceFolder url="file://$MODULE_DIR$/login/src/main/resources" type="java-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/login/src/test/resources" type="java-test-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/game/src/test/resources" type="java-test-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/master/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/master/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/master/src/test/resources" type="java-test-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/master/src/test/java" isTestSource="true" />
+       <sourceFolder url="file://$MODULE_DIR$/network/src/main/java" isTestSource="false" />
+       <sourceFolder url="file://$MODULE_DIR$/network/src/main/resources" type="java-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/update/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/update/src/main/resources" type="java-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/network/src/test/java" isTestSource="true" />
+       <sourceFolder url="file://$MODULE_DIR$/network/src/test/resources" type="java-test-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/update/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/update/src/main/resources" type="java-resource" />
+       <sourceFolder url="file://$MODULE_DIR$/update/src/test/java" isTestSource="true" />
+       <sourceFolder url="file://$MODULE_DIR$/update/src/test/resources" type="java-test-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/master/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/master/src/main/resources" type="java-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/master/src/test/resources" type="java-test-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/master/src/test/java" isTestSource="true" />
+-      <sourceFolder url="file://$MODULE_DIR$/cache/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/cache/src/main/resources" type="java-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/cache/src/test/java" isTestSource="true" />
+-      <sourceFolder url="file://$MODULE_DIR$/cache/src/test/resources" type="java-test-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/audio/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/audio/src/main/resources" type="java-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/audio/src/test/java" isTestSource="true" />
+-      <sourceFolder url="file://$MODULE_DIR$/audio/src/test/resources" type="java-test-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/java" isTestSource="false" />
+-      <sourceFolder url="file://$MODULE_DIR$/lobby/src/main/resources" type="java-resource" />
+-      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/java" isTestSource="true" />
+-      <sourceFolder url="file://$MODULE_DIR$/lobby/src/test/resources" type="java-test-resource" />
+       <excludeFolder url="file://$MODULE_DIR$/.gradle" />
++      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+       <excludeFolder url="file://$MODULE_DIR$/build" />
+-      <excludeFolder url="file://$MODULE_DIR$/cache/src/main/resources/cache" />
++      <excludeFolder url="file://$MODULE_DIR$/gradle" />
+     </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
+-    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
+     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+-    <orderEntry type="library" exported="" name="Gradle: io.netty:netty-all:4.0.31.Final" level="project" />
+-    <orderEntry type="library" exported="" name="Gradle: com.google.guava:guava:18.0" level="project" />
++    <orderEntry type="library" exported="" name="Gradle: io.netty:netty-all:4.0.33.Final" level="project" />
++    <orderEntry type="library" exported="" name="Gradle: com.google.guava:guava:19.0" level="project" />
++    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.12" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/DeltaInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/DeltaInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/DeltaInputStream.java	(revision )
+@@ -9,10 +9,9 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
++import java.io.IOException;
+ import java.io.InputStream;
+ 
+-import java.io.IOException;
+-
+ /**
+  * Decodes raw Delta-filtered data (no XZ headers).
+  * <p>
+@@ -20,7 +19,7 @@
+  * cannot have an end-of-payload marker. It will simply decode until
+  * its input stream indicates end of input.
+  */
+-public class DeltaInputStream extends InputStream {
++class DeltaInputStream extends InputStream {
+     /**
+      * Smallest supported delta calculation distance.
+      */
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMACoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMACoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/lzma/LZMACoder.java	(revision )
+@@ -51,7 +51,7 @@
+                                     new short[32], new short[32] };
+     final short[] distAlign = new short[ALIGN_SIZE];
+ 
+-    static final int getDistState(int len) {
++    static int getDistState(int len) {
+         return len < DIST_STATES + MATCH_LEN_MIN
+                ? len - MATCH_LEN_MIN
+                : DIST_STATES - 1;
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/delta/DeltaCoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/delta/DeltaCoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/delta/DeltaCoder.java	(revision )
+@@ -10,8 +10,8 @@
+ package com.friz.cache.utility.tukaani.delta;
+ 
+ abstract class DeltaCoder {
+-    static final int DISTANCE_MIN = 1;
+-    static final int DISTANCE_MAX = 256;
++    private static final int DISTANCE_MIN = 1;
++    private static final int DISTANCE_MAX = 256;
+     static final int DISTANCE_MASK = DISTANCE_MAX - 1;
+ 
+     final int distance;
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/CountingInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/CountingInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/CountingInputStream.java	(revision )
+@@ -9,9 +9,11 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
++import com.sun.istack.internal.NotNull;
++
+ import java.io.FilterInputStream;
+-import java.io.InputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Counts the number of bytes read from an input stream.
+@@ -31,7 +33,7 @@
+         return ret;
+     }
+ 
+-    public int read(byte[] b, int off, int len) throws IOException {
++    public int read(@NotNull byte[] b, int off, int len) throws IOException {
+         int ret = in.read(b, off, len);
+         if (ret > 0 && size >= 0)
+             size += ret;
+Index: cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2InputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2InputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2InputStream.java	(revision )
+@@ -45,7 +45,7 @@
+  */
+ public class CBZip2InputStream extends InputStream implements BZip2Constants {
+ 
+-    private static final class Data extends Object {
++    private static final class Data {
+ 
+         // (with blockSize 900k)
+         final boolean[] inUse   = new boolean[256];                                   //      256 byte
+@@ -203,7 +203,7 @@
+ 
+     // Variables used by setup* methods exclusively
+ 
+-    private int computedBlockCRC, computedCombinedCRC;
++    private int computedCombinedCRC;
+     private int su_count;
+     private int su_ch2;
+     private int su_chPrev;
+@@ -351,10 +351,10 @@
+     }
+ 
+     private void endBlock() throws IOException {
+-        this.computedBlockCRC = this.crc.getFinalCRC();
++        int computedBlockCRC = this.crc.getFinalCRC();
+ 
+         // A bad CRC is considered a fatal error.
+-        if (this.storedBlockCRC != this.computedBlockCRC) {
++        if (this.storedBlockCRC != computedBlockCRC) {
+             // make next blocks readable without error
+             // (repair feature, not yet documented, not tested)
+             this.computedCombinedCRC
+@@ -368,7 +368,7 @@
+         this.computedCombinedCRC
+             = (this.computedCombinedCRC << 1)
+             | (this.computedCombinedCRC >>> 31);
+-        this.computedCombinedCRC ^= this.computedBlockCRC;
++        this.computedCombinedCRC ^= computedBlockCRC;
+     }
+ 
+     private void getAndMoveToFrontDecode() throws IOException {
+@@ -402,7 +402,7 @@
+         int groupNo     = 0;
+         int groupPos    = G_SIZE - 1;
+         final int eob   = this.nInUse + 1;
+-        int nextSym     = getAndMoveToFrontDecode0(0);
++        int nextSym     = getAndMoveToFrontDecode0();
+         int bsBuffShadow      = this.bsBuff;
+         int bsLiveShadow      = this.bsLive;
+         int lastShadow        = -1;
+@@ -445,7 +445,6 @@
+                         if (thech >= 0) {
+                             bsBuffShadow = (bsBuffShadow << 8) | thech;
+                             bsLiveShadow += 8;
+-                            continue;
+                         } else {
+                             throw new IOException("unexpected end of stream");
+                         }
+@@ -460,7 +459,6 @@
+                             if (thech >= 0) {
+                                 bsBuffShadow = (bsBuffShadow << 8) | thech;
+                                 bsLiveShadow += 8;
+-                                continue;
+                             } else {
+                                 throw new IOException("unexpected end of stream");
+                             }
+@@ -525,7 +523,6 @@
+                     if (thech >= 0) {
+                         bsBuffShadow = (bsBuffShadow << 8) | thech;
+                         bsLiveShadow += 8;
+-                        continue;
+                     } else {
+                         throw new IOException("unexpected end of stream");
+                     }
+@@ -540,7 +537,6 @@
+                         if (thech >= 0) {
+                             bsBuffShadow = (bsBuffShadow << 8) | thech;
+                             bsLiveShadow += 8;
+-                            continue;
+                         } else {
+                             throw new IOException("unexpected end of stream");
+                         }
+@@ -557,11 +553,11 @@
+         this.bsBuff = bsBuffShadow;
+     }
+ 
+-    private int getAndMoveToFrontDecode0(final int groupNo)
++    private int getAndMoveToFrontDecode0()
+         throws IOException {
+         final InputStream inShadow  = this.in;
+         final Data dataShadow  = this.data;
+-        final int zt          = dataShadow.selector[groupNo] & 0xff;
++        final int zt          = dataShadow.selector[0] & 0xff;
+         final int[] limit_zt  = dataShadow.limit[zt];
+         int zn = dataShadow.minLens[zt];
+         int zvec = bsR(zn);
+@@ -576,7 +572,6 @@
+                 if (thech >= 0) {
+                     bsBuffShadow = (bsBuffShadow << 8) | thech;
+                     bsLiveShadow += 8;
+-                    continue;
+                 } else {
+                     throw new IOException("unexpected end of stream");
+                 }
+Index: cache/src/main/java/com/friz/cache/utility/bzip2/CRC.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/bzip2/CRC.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/bzip2/CRC.java	(revision )
+@@ -30,7 +30,7 @@
+  *
+  */
+ final class CRC {
+-    static final int crc32Table[] = {
++    private static final int[] crc32Table = {
+         0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9,
+         0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
+         0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
+@@ -97,7 +97,7 @@
+         0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
+     };
+ 
+-    int globalCrc;
++    private int globalCrc;
+ 
+     CRC() {
+         initialiseCRC();
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexBase.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexBase.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexBase.java	(revision )
+@@ -32,7 +32,7 @@
+         return (getUnpaddedIndexSize() + 3) & ~3;
+     }
+ 
+-    public long getStreamSize() {
++    long getStreamSize() {
+         return Util.STREAM_HEADER_SIZE + blocksSum + getIndexSize()
+                 + Util.STREAM_HEADER_SIZE;
+     }
+Index: .idea/.name
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- .idea/.name	(revision )
++++ .idea/.name	(revision )
+@@ -0,0 +1,1 @@
++MultiServer
+\ No newline at end of file
+Index: game/src/main/java/com/friz/game/network/GameChannelHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- game/src/main/java/com/friz/game/network/GameChannelHandler.java	(revision )
++++ game/src/main/java/com/friz/game/network/GameChannelHandler.java	(revision )
+@@ -0,0 +1,47 @@
++/*
++ * MultiServer - Multiple Server Communication Application
++ * Copyright (C) 2015 Kyle Fricilone
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++package com.friz.game.network;
++
++import com.friz.game.GameServer;
++import com.friz.network.event.Event;
++import com.friz.network.event.EventLink;
++import io.netty.channel.ChannelHandlerContext;
++import io.netty.channel.SimpleChannelInboundHandler;
++
++/**
++ * Created by Kyle Fricilone on 1/4/2016.
++ */
++public class GameChannelHandler extends SimpleChannelInboundHandler<Event> {
++
++    private final GameServer server;
++
++    public GameChannelHandler(GameServer s) {
++        this.server = s;
++    }
++
++    @Override
++    public void channelActive(ChannelHandlerContext ctx) {
++        ctx.channel().attr(server.getAttr()).set(new GameSessionContext(ctx.channel(), server));
++    }
++
++    @Override
++    protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
++        server.getHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
++    }
++}
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/SingleXZInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/SingleXZInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/SingleXZInputStream.java	(revision )
+@@ -9,16 +9,15 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.check.Check;
+ import com.friz.cache.utility.tukaani.common.DecoderUtil;
+ import com.friz.cache.utility.tukaani.common.StreamFlags;
+ import com.friz.cache.utility.tukaani.index.IndexHash;
+ 
+ import java.io.DataInputStream;
+-import java.io.IOException;
+ import java.io.EOFException;
++import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Decompresses exactly one XZ Stream in streamed mode (no seeking).
+Index: gradlew.bat
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- gradlew.bat	(revision )
++++ gradlew.bat	(revision )
+@@ -0,0 +1,90 @@
++@if "%DEBUG%" == "" @echo off
++@rem ##########################################################################
++@rem
++@rem  Gradle startup script for Windows
++@rem
++@rem ##########################################################################
++
++@rem Set local scope for the variables with windows NT shell
++if "%OS%"=="Windows_NT" setlocal
++
++@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++set DEFAULT_JVM_OPTS=
++
++set DIRNAME=%~dp0
++if "%DIRNAME%" == "" set DIRNAME=.
++set APP_BASE_NAME=%~n0
++set APP_HOME=%DIRNAME%
++
++@rem Find java.exe
++if defined JAVA_HOME goto findJavaFromJavaHome
++
++set JAVA_EXE=java.exe
++%JAVA_EXE% -version >NUL 2>&1
++if "%ERRORLEVEL%" == "0" goto init
++
++echo.
++echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:findJavaFromJavaHome
++set JAVA_HOME=%JAVA_HOME:"=%
++set JAVA_EXE=%JAVA_HOME%/bin/java.exe
++
++if exist "%JAVA_EXE%" goto init
++
++echo.
++echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
++echo.
++echo Please set the JAVA_HOME variable in your environment to match the
++echo location of your Java installation.
++
++goto fail
++
++:init
++@rem Get command-line arguments, handling Windowz variants
++
++if not "%OS%" == "Windows_NT" goto win9xME_args
++if "%@eval[2+2]" == "4" goto 4NT_args
++
++:win9xME_args
++@rem Slurp the command line arguments.
++set CMD_LINE_ARGS=
++set _SKIP=2
++
++:win9xME_args_slurp
++if "x%~1" == "x" goto execute
++
++set CMD_LINE_ARGS=%*
++goto execute
++
++:4NT_args
++@rem Get arguments from the 4NT Shell from JP Software
++set CMD_LINE_ARGS=%$
++
++:execute
++@rem Setup the command line
++
++set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
++
++@rem Execute Gradle
++"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
++
++:end
++@rem End local scope for the variables with windows NT shell
++if "%ERRORLEVEL%"=="0" goto mainEnd
++
++:fail
++rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
++rem the _cmd.exe /c_ return code!
++if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
++exit /b 1
++
++:mainEnd
++if "%OS%"=="Windows_NT" endlocal
++
++:omega
+Index: gradlew
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- gradlew	(revision )
++++ gradlew	(revision )
+@@ -0,0 +1,164 @@
++#!/usr/bin/env bash
++
++##############################################################################
++##
++##  Gradle start up script for UN*X
++##
++##############################################################################
++
++# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
++DEFAULT_JVM_OPTS=""
++
++APP_NAME="Gradle"
++APP_BASE_NAME=`basename "$0"`
++
++# Use the maximum available, or set MAX_FD != -1 to use that value.
++MAX_FD="maximum"
++
++warn ( ) {
++    echo "$*"
++}
++
++die ( ) {
++    echo
++    echo "$*"
++    echo
++    exit 1
++}
++
++# OS specific support (must be 'true' or 'false').
++cygwin=false
++msys=false
++darwin=false
++case "`uname`" in
++  CYGWIN* )
++    cygwin=true
++    ;;
++  Darwin* )
++    darwin=true
++    ;;
++  MINGW* )
++    msys=true
++    ;;
++esac
++
++# For Cygwin, ensure paths are in UNIX format before anything is touched.
++if $cygwin ; then
++    [ -n "$JAVA_HOME" ] && JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
++fi
++
++# Attempt to set APP_HOME
++# Resolve links: $0 may be a link
++PRG="$0"
++# Need this for relative symlinks.
++while [ -h "$PRG" ] ; do
++    ls=`ls -ld "$PRG"`
++    link=`expr "$ls" : '.*-> \(.*\)$'`
++    if expr "$link" : '/.*' > /dev/null; then
++        PRG="$link"
++    else
++        PRG=`dirname "$PRG"`"/$link"
++    fi
++done
++SAVED="`pwd`"
++cd "`dirname \"$PRG\"`/" >&-
++APP_HOME="`pwd -P`"
++cd "$SAVED" >&-
++
++CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
++
++# Determine the Java command to use to start the JVM.
++if [ -n "$JAVA_HOME" ] ; then
++    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
++        # IBM's JDK on AIX uses strange locations for the executables
++        JAVACMD="$JAVA_HOME/jre/sh/java"
++    else
++        JAVACMD="$JAVA_HOME/bin/java"
++    fi
++    if [ ! -x "$JAVACMD" ] ; then
++        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++    fi
++else
++    JAVACMD="java"
++    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
++
++Please set the JAVA_HOME variable in your environment to match the
++location of your Java installation."
++fi
++
++# Increase the maximum file descriptors if we can.
++if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
++    MAX_FD_LIMIT=`ulimit -H -n`
++    if [ $? -eq 0 ] ; then
++        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
++            MAX_FD="$MAX_FD_LIMIT"
++        fi
++        ulimit -n $MAX_FD
++        if [ $? -ne 0 ] ; then
++            warn "Could not set maximum file descriptor limit: $MAX_FD"
++        fi
++    else
++        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
++    fi
++fi
++
++# For Darwin, add options to specify how the application appears in the dock
++if $darwin; then
++    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
++fi
++
++# For Cygwin, switch paths to Windows format before running java
++if $cygwin ; then
++    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
++    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
++
++    # We build the pattern for arguments to be converted via cygpath
++    ROOTDIRSRAW=`find -L / -maxdepth 1 -mindepth 1 -type d 2>/dev/null`
++    SEP=""
++    for dir in $ROOTDIRSRAW ; do
++        ROOTDIRS="$ROOTDIRS$SEP$dir"
++        SEP="|"
++    done
++    OURCYGPATTERN="(^($ROOTDIRS))"
++    # Add a user-defined pattern to the cygpath arguments
++    if [ "$GRADLE_CYGPATTERN" != "" ] ; then
++        OURCYGPATTERN="$OURCYGPATTERN|($GRADLE_CYGPATTERN)"
++    fi
++    # Now convert the arguments - kludge to limit ourselves to /bin/sh
++    i=0
++    for arg in "$@" ; do
++        CHECK=`echo "$arg"|egrep -c "$OURCYGPATTERN" -`
++        CHECK2=`echo "$arg"|egrep -c "^-"`                                 ### Determine if an option
++
++        if [ $CHECK -ne 0 ] && [ $CHECK2 -eq 0 ] ; then                    ### Added a condition
++            eval `echo args$i`=`cygpath --path --ignore --mixed "$arg"`
++        else
++            eval `echo args$i`="\"$arg\""
++        fi
++        i=$((i+1))
++    done
++    case $i in
++        (0) set -- ;;
++        (1) set -- "$args0" ;;
++        (2) set -- "$args0" "$args1" ;;
++        (3) set -- "$args0" "$args1" "$args2" ;;
++        (4) set -- "$args0" "$args1" "$args2" "$args3" ;;
++        (5) set -- "$args0" "$args1" "$args2" "$args3" "$args4" ;;
++        (6) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" ;;
++        (7) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" ;;
++        (8) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" ;;
++        (9) set -- "$args0" "$args1" "$args2" "$args3" "$args4" "$args5" "$args6" "$args7" "$args8" ;;
++    esac
++fi
++
++# Split up the JVM_OPTS And GRADLE_OPTS values into an array, following the shell quoting and substitution rules
++function splitJvmOpts() {
++    JVM_OPTS=("$@")
++}
++eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
++JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
++
++exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+Index: cache/src/main/java/com/friz/cache/Cache.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/Cache.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/Cache.java	(revision )
+@@ -96,7 +96,7 @@
+ 	 * @return The {@link ChecksumTable}.
+ 	 * @throws IOException if an I/O error occurs.
+ 	 */
+-	public ChecksumTable createChecksumTable() throws IOException {
++	private ChecksumTable createChecksumTable() throws IOException {
+ 		/* create the checksum table */
+ 		int size = store.getTypeCount();
+ 		ChecksumTable table = new ChecksumTable(size);
+@@ -163,7 +163,7 @@
+ 	 * @return The file.
+ 	 * @throws IOException if an I/O error occurred.
+ 	 */
+-	public Container read(int type, int file) throws IOException {
++	private Container read(int type, int file) throws IOException {
+ 		/* we don't want people reading/manipulating these manually */
+ 		if (type == 255)
+ 			throw new IOException("Reference tables can only be read with the low level FileStore API!");
+@@ -176,7 +176,7 @@
+ 	 * Reads a file contained in an archive in the cache.
+ 	 * @param type The type of the file.
+ 	 * @param file The archive id.
+-	 * @param file The file within the archive.
++	 * @param member The file within the archive.
+ 	 * @return The file.
+ 	 * @throws IOException if an I/O error occurred.
+ 	 */
+@@ -230,7 +230,7 @@
+ 	 * @param container The {@link Container} to write.
+ 	 * @throws IOException if an I/O error occurs.
+ 	 */
+-	public void write(int type, int file, Container container) throws IOException {
++	private void write(int type, int file, Container container) throws IOException {
+ 		/* we don't want people reading/manipulating these manually */
+ 		if (type == 255)
+ 			throw new IOException("Reference tables can only be modified with the low level FileStore API!");
+@@ -269,7 +269,7 @@
+ 
+ 		/* calculate and update the whirlpool digest if we need to */
+ 		if ((table.getFlags() & ReferenceTable.FLAG_WHIRLPOOL) != 0) {
+-			byte[] whirlpool = Whirlpool.whirlpool(bytes, 0, bytes.length);
++			byte[] whirlpool = Whirlpool.whirlpool(bytes, bytes.length);
+ 			entry.setWhirlpool(whirlpool);
+ 		}
+ 
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexDecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexDecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/index/IndexDecoder.java	(revision )
+@@ -9,18 +9,18 @@
+ 
+ package com.friz.cache.utility.tukaani.index;
+ 
+-import java.io.IOException;
+-import java.io.EOFException;
+-import java.util.zip.CheckedInputStream;
+-
++import com.friz.cache.utility.tukaani.CorruptedInputException;
+ import com.friz.cache.utility.tukaani.MemoryLimitException;
+ import com.friz.cache.utility.tukaani.SeekableInputStream;
+-import com.friz.cache.utility.tukaani.common.DecoderUtil;
+-import com.friz.cache.utility.tukaani.CorruptedInputException;
+ import com.friz.cache.utility.tukaani.UnsupportedOptionsException;
++import com.friz.cache.utility.tukaani.common.DecoderUtil;
+ import com.friz.cache.utility.tukaani.common.StreamFlags;
+ 
+-public class IndexDecoder extends IndexBase {
++import java.io.EOFException;
++import java.io.IOException;
++import java.util.zip.CheckedInputStream;
++
++class IndexDecoder extends IndexBase {
+     private final StreamFlags streamFlags;
+     private final long streamPadding;
+     private final int memoryUsage;
+Index: .idea/uiDesigner.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/uiDesigner.xml	(revision )
++++ .idea/uiDesigner.xml	(revision )
+@@ -0,0 +1,124 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Palette2">
++    <group name="Swing">
++      <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="1" hsize-policy="6" anchor="0" fill="1" />
++      </item>
++      <item class="com.intellij.uiDesigner.VSpacer" tooltip-text="Vertical Spacer" icon="/com/intellij/uiDesigner/icons/vspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="1" anchor="0" fill="2" />
++      </item>
++      <item class="javax.swing.JPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JScrollPane" icon="/com/intellij/uiDesigner/icons/scrollPane.png" removable="false" auto-create-binding="false" can-attach-label="true">
++        <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JButton" icon="/com/intellij/uiDesigner/icons/button.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="0" fill="1" />
++        <initial-values>
++          <property name="text" value="Button" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JRadioButton" icon="/com/intellij/uiDesigner/icons/radioButton.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="RadioButton" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JCheckBox" icon="/com/intellij/uiDesigner/icons/checkBox.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="3" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="CheckBox" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JLabel" icon="/com/intellij/uiDesigner/icons/label.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="0" anchor="8" fill="0" />
++        <initial-values>
++          <property name="text" value="Label" />
++        </initial-values>
++      </item>
++      <item class="javax.swing.JTextField" icon="/com/intellij/uiDesigner/icons/textField.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JPasswordField" icon="/com/intellij/uiDesigner/icons/passwordField.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JFormattedTextField" icon="/com/intellij/uiDesigner/icons/formattedTextField.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1">
++          <preferred-size width="150" height="-1" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTextArea" icon="/com/intellij/uiDesigner/icons/textArea.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTextPane" icon="/com/intellij/uiDesigner/icons/textPane.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JEditorPane" icon="/com/intellij/uiDesigner/icons/editorPane.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JComboBox" icon="/com/intellij/uiDesigner/icons/comboBox.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="2" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JTable" icon="/com/intellij/uiDesigner/icons/table.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JList" icon="/com/intellij/uiDesigner/icons/list.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="2" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTree" icon="/com/intellij/uiDesigner/icons/tree.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3">
++          <preferred-size width="150" height="50" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JTabbedPane" icon="/com/intellij/uiDesigner/icons/tabbedPane.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
++          <preferred-size width="200" height="200" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JSplitPane" icon="/com/intellij/uiDesigner/icons/splitPane.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="3">
++          <preferred-size width="200" height="200" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JSpinner" icon="/com/intellij/uiDesigner/icons/spinner.png" removable="false" auto-create-binding="true" can-attach-label="true">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JSlider" icon="/com/intellij/uiDesigner/icons/slider.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="8" fill="1" />
++      </item>
++      <item class="javax.swing.JSeparator" icon="/com/intellij/uiDesigner/icons/separator.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="6" anchor="0" fill="3" />
++      </item>
++      <item class="javax.swing.JProgressBar" icon="/com/intellij/uiDesigner/icons/progressbar.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1" />
++      </item>
++      <item class="javax.swing.JToolBar" icon="/com/intellij/uiDesigner/icons/toolbar.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="6" anchor="0" fill="1">
++          <preferred-size width="-1" height="20" />
++        </default-constraints>
++      </item>
++      <item class="javax.swing.JToolBar$Separator" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.png" removable="false" auto-create-binding="false" can-attach-label="false">
++        <default-constraints vsize-policy="0" hsize-policy="0" anchor="0" fill="1" />
++      </item>
++      <item class="javax.swing.JScrollBar" icon="/com/intellij/uiDesigner/icons/scrollbar.png" removable="false" auto-create-binding="true" can-attach-label="false">
++        <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
++      </item>
++    </group>
++  </component>
++</project>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARM.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARM.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARM.java	(revision )
+@@ -14,8 +14,8 @@
+     private final boolean isEncoder;
+     private int pos;
+ 
+-    public ARM(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public ARM(int startPos) {
++        this.isEncoder = false;
+         pos = startPos + 8;
+     }
+ 
+Index: cache/src/main/java/com/friz/cache/utility/crypto/Xtea.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/crypto/Xtea.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/crypto/Xtea.java	(revision )
+@@ -43,6 +43,7 @@
+ 	 * @throws IllegalArgumentException if the key is not exactly 4 elements
+ 	 * long.
+ 	 */
++	@SuppressWarnings("NumericOverflow")
+ 	public static void decipher(ByteBuffer buffer, int[] key) {
+ 		if (key.length != 4)
+ 			throw new IllegalArgumentException();
+Index: audio/src/main/java/com/friz/audio/network/AudioSessionContext.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- audio/src/main/java/com/friz/audio/network/AudioSessionContext.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ audio/src/main/java/com/friz/audio/network/AudioSessionContext.java	(revision )
+@@ -56,7 +56,7 @@
+         this.service = audioServer.getService();
+     }
+ 
+-    public void writeResponse(HttpVersion version, ByteBuf container) {
++    private void writeResponse(HttpVersion version, ByteBuf container) {
+         HttpResponse response = new DefaultHttpResponse(version, HttpResponseStatus.OK);
+         HttpHeaders.setContentLength(response, container.readableBytes());
+ 
+@@ -128,10 +128,9 @@
+ 
+     /**
+      * Sets the {@code idle} flag.
+-     * @param idle the {@code idle} flag to set.
+      */
+-    public void setIdle(boolean idle) {
+-        this.idle = idle;
++    public void setIdle() {
++        this.idle = false;
+     }
+ 
+     /**
+Index: lobby/src/main/java/com/friz/lobby/network/codec/LoginDecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- lobby/src/main/java/com/friz/lobby/network/codec/LoginDecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ lobby/src/main/java/com/friz/lobby/network/codec/LoginDecoder.java	(revision )
+@@ -72,11 +72,12 @@
+         buf.readBytes(xtea);
+         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
+ 
++        String username = "";
+         boolean asBase = xteaBuf.readBoolean();
+         if (asBase)
+-            BufferUtils.getBase37(xteaBuf);
++            username = BufferUtils.getBase37(xteaBuf);
+         else
+-            BufferUtils.getString(xteaBuf);
++            username = BufferUtils.getString(xteaBuf);
+ 
+         int game = xteaBuf.readUnsignedByte();
+         int lang = xteaBuf.readUnsignedByte();
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/SimpleInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/SimpleInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/SimpleInputStream.java	(revision )
+@@ -9,11 +9,10 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.simple.SimpleFilter;
+ 
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ class SimpleInputStream extends InputStream {
+     private static final int FILTER_BUF_SIZE = 4096;
+Index: lobby/src/main/java/com/friz/lobby/LobbyServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- lobby/src/main/java/com/friz/lobby/LobbyServer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ lobby/src/main/java/com/friz/lobby/LobbyServer.java	(revision )
+@@ -18,9 +18,12 @@
+ package com.friz.lobby;
+ 
+ import com.friz.cache.Cache;
++import com.friz.lobby.network.LobbyChannelHandler;
+ import com.friz.lobby.network.codec.LoginInitDecoder;
+ import com.friz.lobby.network.codec.LoginInitEncoder;
+ import com.friz.network.NetworkServer;
++import com.friz.network.SessionContext;
++import com.friz.network.event.EventHub;
+ import io.netty.bootstrap.ServerBootstrap;
+ import io.netty.channel.ChannelInitializer;
+ import io.netty.channel.ChannelOption;
+@@ -28,6 +31,7 @@
+ import io.netty.channel.nio.NioEventLoopGroup;
+ import io.netty.channel.socket.nio.NioServerSocketChannel;
+ import io.netty.channel.socket.nio.NioSocketChannel;
++import io.netty.util.AttributeKey;
+ 
+ import java.net.InetSocketAddress;
+ 
+@@ -37,6 +41,8 @@
+ public class LobbyServer extends NetworkServer {
+ 
+     private final Cache cache;
++    private final EventHub hub = new EventHub();
++    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("lobby-attribute-key");
+ 
+     public LobbyServer(Cache c) {
+         this.cache = c;
+@@ -47,6 +53,8 @@
+         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
+         bootstrap = new ServerBootstrap();
+ 
++        LobbyServer s = this;
++
+         bootstrap.group(group)
+                 .channel(NioServerSocketChannel.class)
+                         //.handler(new LoggingHandler(LogLevel.INFO))
+@@ -57,6 +65,7 @@
+                         ChannelPipeline p = ch.pipeline();
+                         p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
+                         p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
++                        p.addLast(LobbyChannelHandler.class.getName(), new LobbyChannelHandler(s));
+                     }
+ 
+                 })
+@@ -84,5 +93,13 @@
+ 
+     public final Cache getCache() {
+         return cache;
++    }
++
++    public EventHub getHub() {
++        return hub;
++    }
++
++    public AttributeKey<SessionContext> getAttr() {
++        return attr;
+     }
+ }
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/X86.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/X86.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/X86.java	(revision )
+@@ -25,8 +25,8 @@
+         return i == 0x00 || i == 0xFF;
+     }
+ 
+-    public X86(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public X86(int startPos) {
++        this.isEncoder = false;
+         pos = startPos + 5;
+     }
+ 
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/modules.xml	(revision )
++++ .idea/modules.xml	(revision )
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/MultiServer.iml" filepath="$PROJECT_DIR$/MultiServer.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARMThumb.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARMThumb.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/ARMThumb.java	(revision )
+@@ -14,8 +14,8 @@
+     private final boolean isEncoder;
+     private int pos;
+ 
+-    public ARMThumb(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public ARMThumb(int startPos) {
++        this.isEncoder = false;
+         pos = startPos + 4;
+     }
+ 
+Index: cache/src/main/java/com/friz/cache/tools/CacheAggregator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/tools/CacheAggregator.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/tools/CacheAggregator.java	(revision )
+@@ -18,21 +18,20 @@
+ 
+ package com.friz.cache.tools;
+ 
+-import java.io.IOException;
+-import java.nio.ByteBuffer;
+-import java.util.zip.CRC32;
+-
+-import com.friz.cache.FileStore;
+ import com.friz.cache.Container;
++import com.friz.cache.FileStore;
+ import com.friz.cache.ReferenceTable;
+ import com.friz.cache.ReferenceTable.Entry;
+-import com.friz.network.Constants;
+ 
+-public final class CacheAggregator {
++import java.io.IOException;
++import java.nio.ByteBuffer;
++import java.util.zip.CRC32;
+ 
++final class CacheAggregator {
++
+ 	public static void main(String[] args) throws IOException {
+-		FileStore otherStore = FileStore.open(Constants.CACHE_LOCATION);
+-		FileStore store = FileStore.open(Constants.CACHE_LOCATION);
++		FileStore otherStore = FileStore.open();
++		FileStore store = FileStore.open();
+ 
+ 		for (int type = 0; type < store.getFileCount(255); type++) {
+ 			ReferenceTable otherTable = ReferenceTable.decode(Container.decode(otherStore.read(255, type)).getData());
+@@ -76,11 +75,8 @@
+ 		}
+ 
+ 		buffer.position(buffer.limit() - 2);
+-		if ((buffer.getShort() & 0xFFFF) != entry.getVersion()) {
+-			return true;
+-		}
++		return (buffer.getShort() & 0xFFFF) != entry.getVersion();
+ 
+-		return false;
+ 	}
+ 
+ }
+Index: cache/src/main/java/com/friz/cache/utility/ByteBufferUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/ByteBufferUtils.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/ByteBufferUtils.java	(revision )
+@@ -17,13 +17,13 @@
+  */
+ package com.friz.cache.utility;
+ 
++import com.friz.cache.utility.crypto.Whirlpool;
++
+ import java.nio.ByteBuffer;
+ import java.util.Arrays;
+ import java.util.zip.CRC32;
+ import java.util.zip.Checksum;
+ 
+-import com.friz.cache.utility.crypto.Whirlpool;
+-
+ /**
+  * Contains {@link ByteBuffer}-related utility methods.
+  * @author Graham
+@@ -119,7 +119,7 @@
+ 	public static byte[] getWhirlpoolDigest(ByteBuffer buf) {
+ 		byte[] bytes = new byte[buf.limit()];
+ 		buf.get(bytes);
+-		return Whirlpool.whirlpool(bytes, 0, bytes.length);
++		return Whirlpool.whirlpool(bytes, bytes.length);
+ 	}
+ 
+ 	/**
+@@ -165,8 +165,8 @@
+ 
+ 	/**
+ 	 * Creates a string from byets in the buffer
+-	 * @param buf
+-	 * @return
++	 * @param buf The buffer
++	 * @return The string
+ 	 */
+ 	public static String getString(ByteBuffer buf) {
+ 		StringBuilder bldr = new StringBuilder();
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(revision )
++++ .idea/compiler.xml	(revision )
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <resourceExtensions />
++    <wildcardResourcePatterns>
++      <entry name="!?*.java" />
++      <entry name="!?*.form" />
++      <entry name="!?*.class" />
++      <entry name="!?*.groovy" />
++      <entry name="!?*.scala" />
++      <entry name="!?*.flex" />
++      <entry name="!?*.kt" />
++      <entry name="!?*.clj" />
++      <entry name="!?*.aj" />
++    </wildcardResourcePatterns>
++    <annotationProcessing>
++      <profile default="true" name="Default" enabled="false">
++        <processorPath useClasspath="true" />
++      </profile>
++    </annotationProcessing>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision )
++++ .idea/misc.xml	(revision )
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="EntryPointsManager">
++    <entry_points version="2.0" />
++  </component>
++  <component name="FrameworkDetectionExcludesConfiguration">
++    <file type="web" url="file://$PROJECT_DIR$" />
++  </component>
++  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
++    <OptionsSetting value="true" id="Add" />
++    <OptionsSetting value="true" id="Remove" />
++    <OptionsSetting value="true" id="Checkout" />
++    <OptionsSetting value="true" id="Update" />
++    <OptionsSetting value="true" id="Status" />
++    <OptionsSetting value="true" id="Edit" />
++    <ConfirmationsSetting value="0" id="Add" />
++    <ConfirmationsSetting value="0" id="Remove" />
++  </component>
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/XZInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/XZInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/XZInputStream.java	(revision )
+@@ -9,13 +9,12 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.common.DecoderUtil;
+ 
+ import java.io.DataInputStream;
+-import java.io.IOException;
+ import java.io.EOFException;
++import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Decompresses a .xz file in streamed mode (no seeking).
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- gradle/wrapper/gradle-wrapper.properties	(revision )
++++ gradle/wrapper/gradle-wrapper.properties	(revision )
+@@ -0,0 +1,6 @@
++#Mon Sep 07 21:41:37 CDT 2015
++distributionBase=GRADLE_USER_HOME
++distributionPath=wrapper/dists
++zipStoreBase=GRADLE_USER_HOME
++zipStorePath=wrapper/dists
++distributionUrl=https\://services.gradle.org/distributions/gradle-2.2-all.zip
+Index: update/src/main/java/com/friz/update/network/listeners/UpdateRequestEventListener.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/network/listeners/UpdateRequestEventListener.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/network/listeners/UpdateRequestEventListener.java	(revision )
+@@ -20,7 +20,6 @@
+ 
+ import com.friz.network.event.EventListener;
+ import com.friz.update.network.UpdateSessionContext;
+-import com.friz.update.network.events.UpdateResponseEvent;
+ import com.friz.update.network.events.UpdateRequestEvent;
+ 
+ 
+@@ -32,9 +31,9 @@
+ 	@Override
+ 	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
+ 		if (version.getVersion() == 855) {
+-			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
++			context.writeSuccess();
+ 		} else {
+-			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);
++			context.writeFailure();
+ 		}
+ 	}
+ 
+Index: .idea/copyright/GPL.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/copyright/GPL.xml	(revision )
++++ .idea/copyright/GPL.xml	(revision )
+@@ -0,0 +1,6 @@
++<component name="CopyrightManager">
++  <copyright>
++    <option name="myName" value="GPL" />
++    <option name="notice" value="MultiServer - Multiple Server Communication Application&#10;Copyright (C) 2015 Kyle Fricilone&#10;&#10;This program is free software: you can redistribute it and/or modify&#10;it under the terms of the GNU General Public License as published by&#10;the Free Software Foundation, either version 3 of the License, or&#10;(at your option) any later version.&#10;&#10;This program is distributed in the hope that it will be useful,&#10;but WITHOUT ANY WARRANTY; without even the implied warranty of&#10;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#10;GNU General Public License for more details.&#10;&#10;You should have received a copy of the GNU General Public License&#10;along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;." />
++  </copyright>
++</component>
+\ No newline at end of file
+Index: update/src/main/java/com/friz/update/network/codec/XorEncoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/network/codec/XorEncoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/network/codec/XorEncoder.java	(revision )
+@@ -21,9 +21,6 @@
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToByteEncoder;
+-import io.netty.handler.codec.MessageToMessageEncoder;
+-
+-import java.util.List;
+ 
+ /**
+  * Created by Kyle Fricilone on 9/20/2015.
+Index: cache/src/main/java/com/friz/cache/utility/CompressionUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/CompressionUtils.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/CompressionUtils.java	(revision )
+@@ -17,18 +17,14 @@
+  */
+ package com.friz.cache.utility;
+ 
+-import java.io.ByteArrayInputStream;
+-import java.io.ByteArrayOutputStream;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.OutputStream;
+-import java.util.zip.GZIPInputStream;
+-import java.util.zip.GZIPOutputStream;
+-
+ import com.friz.cache.utility.bzip2.CBZip2InputStream;
+ import com.friz.cache.utility.bzip2.CBZip2OutputStream;
+ import com.friz.cache.utility.tukaani.LZMAInputStream;
+ 
++import java.io.*;
++import java.util.zip.GZIPInputStream;
++import java.util.zip.GZIPOutputStream;
++
+ /**
+  * A class that contains methods to compress and uncompress BZIP2 and GZIP byte
+  * arrays.
+@@ -59,7 +55,7 @@
+ 			ByteArrayOutputStream os = new ByteArrayOutputStream();
+ 			try {
+ 				byte[] buf = new byte[4096];
+-				int len = 0;
++				int len;
+ 				while ((len = is.read(buf, 0, buf.length)) != -1) {
+ 					os.write(buf, 0, len);
+ 				}
+@@ -89,7 +85,7 @@
+ 			OutputStream os = new CBZip2OutputStream(bout, 1);
+ 			try {
+ 				byte[] buf = new byte[4096];
+-				int len = 0;
++				int len;
+ 				while ((len = is.read(buf, 0, buf.length)) != -1) {
+ 					os.write(buf, 0, len);
+ 				}
+@@ -124,7 +120,7 @@
+ 			try {
+ 				/* copy data between the streams */
+ 				byte[] buf = new byte[4096];
+-				int len = 0;
++				int len;
+ 				while ((len = is.read(buf, 0, buf.length)) != -1) {
+ 					os.write(buf, 0, len);
+ 				}
+@@ -185,7 +181,7 @@
+ 		/* prepare a new byte array with the lzma header at the start */
+ 		byte[] lzma = new byte[bytes.length + 8];
+ 		System.arraycopy(bytes, 0, lzma, 0, 5);
+-		lzma[5] = (byte) (size >>> 0);
++		lzma[5] = (byte) (size);
+ 		lzma[6] = (byte) (size >>> 8);
+ 		lzma[7] = (byte) (size >>> 16);
+ 		lzma[8] = (byte) (size >>> 24);
+Index: update/src/main/java/com/friz/update/network/codec/UpdateEncoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/network/codec/UpdateEncoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/network/codec/UpdateEncoder.java	(revision )
+@@ -29,16 +29,16 @@
+  */
+ public final class UpdateEncoder extends MessageToByteEncoder<FileResponseEvent> {
+ 
+-	
++
+ 	/**
+ 	 * The remaining bytes after the header.
+ 	 */
+-	private static int BYTES_REMAINING_AFTER_HEADER = Sector.DATA_SIZE - 6;
++	private static final int BYTES_REMAINING_AFTER_HEADER = Sector.DATA_SIZE - 6;
+-	
++
+ 	/**
+ 	 * The remaining bytes after the block.
+ 	 */
+-	private static int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
++	private static final int BYTES_REMAINING_AFTER_BLOCK = Sector.DATA_SIZE - 5;
+ 
+     @Override
+ 	protected void encode(ChannelHandlerContext ctx, FileResponseEvent msg, ByteBuf buffer) throws Exception {
+Index: cache/src/main/java/com/friz/cache/ChecksumTable.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/ChecksumTable.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/ChecksumTable.java	(revision )
+@@ -17,15 +17,15 @@
+  */
+ package com.friz.cache;
+ 
++import com.friz.cache.utility.crypto.Rsa;
++import com.friz.cache.utility.crypto.Whirlpool;
++
+ import java.io.ByteArrayOutputStream;
+ import java.io.DataOutputStream;
+ import java.io.IOException;
+ import java.math.BigInteger;
+ import java.nio.ByteBuffer;
+ 
+-import com.friz.cache.utility.crypto.Rsa;
+-import com.friz.cache.utility.crypto.Whirlpool;
+-
+ /**
+  * A {@link ChecksumTable} stores checksums and versions of
+  * {@link ReferenceTable}s. When encoded in a {@link Container} and prepended
+@@ -48,7 +48,7 @@
+ 	 *             if an I/O error occurs.
+ 	 */
+ 	public static ChecksumTable decode(ByteBuffer buffer) throws IOException {
+-		return decode(buffer, false);
++		return decode(buffer);
+ 	}
+ 
+ 	/**
+@@ -56,35 +56,32 @@
+ 	 * 
+ 	 * @param buffer
+ 	 *            The {@link ByteBuffer} containing the table.
+-	 * @param whirlpool
+-	 *            If whirlpool digests should be read.
+ 	 * @return The decoded {@link ChecksumTable}.
+ 	 * @throws IOException
+ 	 *             if an I/O error occurs.
+ 	 */
+-	public static ChecksumTable decode(ByteBuffer buffer, boolean whirlpool)
++	private static ChecksumTable decode(ByteBuffer buffer)
+ 			throws IOException {
+-		return decode(buffer, whirlpool, null, null);
++		return decode(buffer, false);
+ 	}
+ 
+ 	/**
+ 	 * Decodes the {@link ChecksumTable} in the specified {@link ByteBuffer} and
+ 	 * decrypts the final whirlpool hash.
+ 	 * 
+-	 * @param buffer
+-	 *            The {@link ByteBuffer} containing the table.
+-	 * @param whirlpool
+-	 *            If whirlpool digests should be read.
+ 	 * @param modulus
+ 	 *            The modulus.
+ 	 * @param publicKey
+ 	 *            The public key.
++	 * @param buffer
++	 *            The {@link ByteBuffer} containing the table.
++	 * @param whirlpool
++	 *            If whirlpool digests should be read.
+ 	 * @return The decoded {@link ChecksumTable}.
+ 	 * @throws IOException
+ 	 *             if an I/O error occurs.
+ 	 */
+-	public static ChecksumTable decode(ByteBuffer buffer, boolean whirlpool,
+-			BigInteger modulus, BigInteger publicKey) throws IOException {
++	private static ChecksumTable decode(ByteBuffer buffer, boolean whirlpool) throws IOException {
+ 		/* find out how many entries there are and allocate a new table */
+ 		int size = whirlpool ? (buffer.get() & 0xFF) : (buffer.limit() / 8);
+ 		ChecksumTable table = new ChecksumTable(size);
+@@ -95,7 +92,7 @@
+ 			byte[] temp = new byte[size * 80 + 1];
+ 			buffer.position(0);
+ 			buffer.get(temp);
+-			masterDigest = Whirlpool.whirlpool(temp, 0, temp.length);
++			masterDigest = Whirlpool.whirlpool(temp, temp.length);
+ 		}
+ 
+ 		/* read the entries */
+@@ -119,8 +116,8 @@
+ 			buffer.get(bytes);
+ 			ByteBuffer temp = ByteBuffer.wrap(bytes);
+ 
+-			if (modulus != null && publicKey != null) {
+-				temp = Rsa.crypt(buffer, modulus, publicKey);
++			if (null != null && null != null) {
++				temp = Rsa.crypt(buffer, null, null);
+ 			}
+ 
+ 			if (temp.limit() != 65)
+@@ -262,20 +259,18 @@
+ 	 *             if an I/O error occurs.
+ 	 */
+ 	public ByteBuffer encode() throws IOException {
+-		return encode(false);
++		return encode();
+ 	}
+ 
+ 	/**
+ 	 * Encodes this {@link ChecksumTable}.
+ 	 * 
+-	 * @param whirlpool
+-	 *            If whirlpool digests should be encoded.
+ 	 * @return The encoded {@link ByteBuffer}.
+ 	 * @throws IOException
+ 	 *             if an I/O error occurs.
+ 	 */
+-	public ByteBuffer encode(boolean whirlpool) throws IOException {
+-		return encode(whirlpool, null, null);
++	private ByteBuffer encode() throws IOException {
++		return encode(false, null, null);
+ 	}
+ 
+ 	/**
+@@ -321,7 +316,7 @@
+ 				byte[] bytes = bout.toByteArray();
+ 				ByteBuffer temp = ByteBuffer.allocate(65);
+ 				temp.put((byte) 0);
+-				temp.put(Whirlpool.whirlpool(bytes, 0, bytes.length));
++				temp.put(Whirlpool.whirlpool(bytes, bytes.length));
+ 				temp.flip();
+ 
+ 				if (modulus != null && privateKey != null) {
+Index: cache/src/main/java/com/friz/cache/Container.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/Container.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/Container.java	(revision )
+@@ -17,12 +17,12 @@
+  */
+ package com.friz.cache;
+ 
++import com.friz.cache.utility.CompressionUtils;
++
+ import java.io.IOException;
+ import java.nio.ByteBuffer;
+ 
+-import com.friz.cache.utility.CompressionUtils;
+ 
+-
+ /**
+  * A {@link Container} holds an optionally compressed file. This class can be
+  * used to decompress and compress containers. A container can also have a two
+@@ -40,7 +40,7 @@
+ 	/**
+ 	 * This type indicates that BZIP2 compression is used.
+ 	 */
+-	public static final int COMPRESSION_BZIP2 = 1;
++	private static final int COMPRESSION_BZIP2 = 1;
+ 
+ 	/**
+ 	 * This type indicates that GZIP compression is used.
+@@ -50,7 +50,7 @@
+ 	/**
+ 	 * This type indicates that LZMA compression is used.
+ 	 */
+-	public static final int COMPRESSION_LZMA = 3;
++	private static final int COMPRESSION_LZMA = 3;
+ 
+ 	/**
+ 	 * Decodes and decompresses the container.
+@@ -234,7 +234,7 @@
+ 	 * Checks if this container is versioned.
+ 	 * @return {@code true} if so, {@code false} if not.
+ 	 */
+-	public boolean isVersioned() {
++	private boolean isVersioned() {
+ 		return version != -1;
+ 	}
+ 
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/LZMA2InputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/LZMA2InputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/LZMA2InputStream.java	(revision )
+@@ -10,14 +10,13 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.lz.LZDecoder;
+ import com.friz.cache.utility.tukaani.lzma.LZMADecoder;
+ import com.friz.cache.utility.tukaani.rangecoder.RangeDecoderFromBuffer;
+ 
+ import java.io.DataInputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Decompresses a raw LZMA2 stream (no XZ headers).
+@@ -49,7 +48,7 @@
+ 
+     private final LZDecoder lz;
+     private final RangeDecoderFromBuffer rc
+-            = new RangeDecoderFromBuffer(COMPRESSED_SIZE_MAX);
++            = new RangeDecoderFromBuffer();
+     private LZMADecoder lzma;
+ 
+     private int uncompressedSize = 0;
+@@ -116,7 +115,7 @@
+      *                          <code>DICT_SIZE_MAX</code>]
+      */
+     public LZMA2InputStream(InputStream in, int dictSize) {
+-        this(in, dictSize, null);
++        this(in, dictSize);
+     }
+ 
+     /**
+@@ -126,27 +125,24 @@
+      * that the dictionary may be initialized using a preset dictionary.
+      * If a preset dictionary was used when compressing the data, the
+      * same preset dictionary must be provided when decompressing.
+-     *
+-     * @param       in          input stream from which LZMA2-compressed
++     *  @param       in          input stream from which LZMA2-compressed
+      *                          data is read
+      *
+      * @param       dictSize    LZMA2 dictionary size as bytes, must be
+      *                          in the range [<code>DICT_SIZE_MIN</code>,
+      *                          <code>DICT_SIZE_MAX</code>]
+      *
+-     * @param       presetDict  preset dictionary or <code>null</code>
+-     *                          to use no preset dictionary
+      */
+-    public LZMA2InputStream(InputStream in, int dictSize, byte[] presetDict) {
++    public LZMA2InputStream(InputStream in, int dictSize) {
+         // Check for null because otherwise null isn't detect
+         // in this constructor.
+         if (in == null)
+             throw new NullPointerException();
+ 
+         this.in = new DataInputStream(in);
+-        this.lz = new LZDecoder(getDictSize(dictSize), presetDict);
++        this.lz = new LZDecoder(getDictSize(dictSize), null);
+ 
+-        if (presetDict != null && presetDict.length > 0)
++        if (null != null && ((byte[]) null).length > 0)
+             needDictReset = false;
+     }
+ 
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/check/None.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/check/None.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/check/None.java	(revision )
+@@ -18,7 +18,6 @@
+     public void update(byte[] buf, int off, int len) {}
+ 
+     public byte[] finish() {
+-        byte[] empty = new byte[0];
+-        return empty;
++        return new byte[0];
+     }
+ }
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/lz/LZDecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/lz/LZDecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/lz/LZDecoder.java	(revision )
+@@ -10,10 +10,10 @@
+ 
+ package com.friz.cache.utility.tukaani.lz;
+ 
++import com.friz.cache.utility.tukaani.CorruptedInputException;
++
+ import java.io.DataInputStream;
+ import java.io.IOException;
+-
+-import com.friz.cache.utility.tukaani.CorruptedInputException;
+ 
+ public final class LZDecoder {
+     private final byte[] buf;
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/BCJCoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/BCJCoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/BCJCoder.java	(revision )
+@@ -10,12 +10,12 @@
+ package com.friz.cache.utility.tukaani;
+ 
+ abstract class BCJCoder implements FilterCoder {
+-    public static final long X86_FILTER_ID = 0x04;
+-    public static final long POWERPC_FILTER_ID = 0x05;
+-    public static final long IA64_FILTER_ID = 0x06;
+-    public static final long ARM_FILTER_ID = 0x07;
+-    public static final long ARMTHUMB_FILTER_ID = 0x08;
+-    public static final long SPARC_FILTER_ID = 0x09;
++    static final long X86_FILTER_ID = 0x04;
++    static final long POWERPC_FILTER_ID = 0x05;
++    static final long IA64_FILTER_ID = 0x06;
++    static final long ARM_FILTER_ID = 0x07;
++    static final long ARMTHUMB_FILTER_ID = 0x08;
++    static final long SPARC_FILTER_ID = 0x09;
+ 
+     public static boolean isBCJFilterID(long filterID) {
+         return filterID >= 0x04 && filterID <= 0x09;
+Index: game/src/main/java/com/friz/game/network/codec/LoginDecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- game/src/main/java/com/friz/game/network/codec/LoginDecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ game/src/main/java/com/friz/game/network/codec/LoginDecoder.java	(revision )
+@@ -73,11 +73,12 @@
+         buf.readBytes(xtea);
+         ByteBuf xteaBuf = Unpooled.wrappedBuffer(new XTEA(xtea).decrypt(key).toByteArray());
+ 
++        String username = "";
+         boolean asBase = xteaBuf.readBoolean();
+         if (asBase)
+-            BufferUtils.getBase37(xteaBuf);
++            username = BufferUtils.getBase37(xteaBuf);
+         else
+-            BufferUtils.getString(xteaBuf);
++            username = BufferUtils.getString(xteaBuf);
+ 
+         int display = xteaBuf.readUnsignedByte();
+         int width = xteaBuf.readUnsignedShort();
+@@ -170,7 +171,7 @@
+         String aString3 = BufferUtils.getString(xteaBuf);
+ 
+         boolean hasAdditional = xteaBuf.readBoolean();
+-        String additionalInfo = new String();
++        String additionalInfo = "";
+         if (hasAdditional)
+             additionalInfo = BufferUtils.getString(xteaBuf);
+ 
+Index: update/src/main/java/com/friz/update/network/UpdateSessionContext.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/network/UpdateSessionContext.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/network/UpdateSessionContext.java	(revision )
+@@ -66,8 +66,8 @@
+         this.service = updateServer.getService();
+     }
+ 
+-    public void writeSuccess(int status) {
+-        channel.writeAndFlush(new UpdateResponseEvent(status)).addListener(new ChannelFutureListener() {
++    public void writeSuccess() {
++        channel.writeAndFlush(new UpdateResponseEvent(UpdateResponseEvent.STATUS_OK)).addListener(new ChannelFutureListener() {
+             @Override
+             public void operationComplete(ChannelFuture future) throws Exception {
+                 if (future.isSuccess()) {
+@@ -79,14 +79,14 @@
+                     p.addFirst(UpdateEncoder.class.getName(), new UpdateEncoder());
+                     p.addFirst(UpdateDecoder.class.getName(), new UpdateDecoder());
+ 
+-                    handshakeComplete = true;
++                    setHandshakeComplete();
+                 }
+             }
+         });
+     }
+ 
+-    public void writeFailure(int status) {
+-        channel.writeAndFlush(new UpdateResponseEvent(status)).addListener(ChannelFutureListener.CLOSE);
++    public void writeFailure() {
++        channel.writeAndFlush(new UpdateResponseEvent(UpdateResponseEvent.STATUS_OUT_OF_DATE)).addListener(ChannelFutureListener.CLOSE);
+     }
+ 
+     /**
+@@ -149,18 +149,16 @@
+ 
+     /**
+      * Sets the {@code idle} flag.
+-     * @param idle the {@code idle} flag to set.
+      */
+-    public void setIdle(boolean idle) {
+-        this.idle = idle;
++    public void setIdle() {
++        this.idle = false;
+     }
+ 
+     /**
+      * Sets the {@code handshakeComplete} flag.
+-     * @param handshakeComplete the handshakeComplete to set
+      */
+-    public void setHandshakeComplete(boolean handshakeComplete) {
+-        this.handshakeComplete = handshakeComplete;
++    public void setHandshakeComplete() {
++        this.handshakeComplete = true;
+     }
+ 
+     /**
+Index: cache/src/main/java/com/friz/cache/utility/bzip2/BZip2Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/bzip2/BZip2Constants.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/bzip2/BZip2Constants.java	(revision )
+@@ -32,7 +32,7 @@
+  * You should have no need to use it.
+  * </p>
+  */
+-public interface BZip2Constants {
++interface BZip2Constants {
+ 
+     int baseBlockSize = 100000;
+     int MAX_ALPHA_SIZE = 258;
+Index: game/src/main/java/com/friz/game/network/GameSessionContext.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- game/src/main/java/com/friz/game/network/GameSessionContext.java	(revision )
++++ game/src/main/java/com/friz/game/network/GameSessionContext.java	(revision )
+@@ -0,0 +1,34 @@
++/*
++ * MultiServer - Multiple Server Communication Application
++ * Copyright (C) 2015 Kyle Fricilone
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++package com.friz.game.network;
++
++import com.friz.game.GameServer;
++import com.friz.network.SessionContext;
++import io.netty.channel.Channel;
++
++/**
++ * Created by Kyle Fricilone on 1/4/2016.
++ */
++class GameSessionContext extends SessionContext<GameServer> {
++
++    public GameSessionContext(Channel c, GameServer gameServer) {
++        super(c, gameServer);
++    }
++
++}
+Index: .idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3.xml	(revision )
++++ .idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3.xml	(revision )
+@@ -0,0 +1,11 @@
++<component name="libraryTable">
++  <library name="Gradle: org.hamcrest:hamcrest-core:1.3">
++    <CLASSES>
++      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar!/" />
++    </CLASSES>
++    <JAVADOC />
++    <SOURCES>
++      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeDecoderFromStream.java	(revision )
+@@ -10,12 +10,11 @@
+ 
+ package com.friz.cache.utility.tukaani.rangecoder;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.CorruptedInputException;
+ 
+ import java.io.DataInputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ public final class RangeDecoderFromStream extends RangeDecoder {
+     private final DataInputStream inData;
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeCoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeCoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/rangecoder/RangeCoder.java	(revision )
+@@ -20,7 +20,7 @@
+     static final short PROB_INIT = (short)(BIT_MODEL_TOTAL / 2);
+     static final int MOVE_BITS = 5;
+ 
+-    public static final void initProbs(short[] probs) {
++    public static void initProbs(short[] probs) {
+         Arrays.fill(probs, PROB_INIT);
+     }
+ }
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/PowerPC.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/PowerPC.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/PowerPC.java	(revision )
+@@ -14,8 +14,8 @@
+     private final boolean isEncoder;
+     private int pos;
+ 
+-    public PowerPC(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public PowerPC(int startPos) {
++        this.isEncoder = false;
+         pos = startPos;
+     }
+ 
+Index: cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2OutputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2OutputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/bzip2/CBZip2OutputStream.java	(revision )
+@@ -137,7 +137,7 @@
+ public class CBZip2OutputStream extends OutputStream
+     implements BZip2Constants {
+ 
+-    private static final class Data extends Object {
++    private static final class Data {
+ 
+         // with blockSize 900k
+         final boolean[] inUse = new boolean[256]; // 256 byte
+@@ -208,56 +208,56 @@
+     /**
+      * The maximum supported blocksize <tt> == 9</tt>.
+      */
+-    public static final int MAX_BLOCKSIZE = 9;
++    private static final int MAX_BLOCKSIZE = 9;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int SETMASK = (1 << 21);
++    private static final int SETMASK = (1 << 21);
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int CLEARMASK = (~SETMASK);
++    private static final int CLEARMASK = (~SETMASK);
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int GREATER_ICOST = 15;
++    private static final int GREATER_ICOST = 15;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int LESSER_ICOST = 0;
++    private static final int LESSER_ICOST = 0;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int SMALL_THRESH = 20;
++    private static final int SMALL_THRESH = 20;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int DEPTH_THRESH = 10;
++    private static final int DEPTH_THRESH = 10;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+      * purposes. If you don't know what it means then you don't need
+      * it.
+      */
+-    protected static final int WORK_FACTOR = 30;
++    private static final int WORK_FACTOR = 30;
+ 
+     /**
+      * This constant is accessible by subclasses for historical
+@@ -268,7 +268,7 @@
+      * try again. In practice I have never seen the stack go above 27
+      * elems, so the following limit seems very generous.  </p>
+      */
+-    protected static final int QSORT_STACK_SIZE = 1000;
++    private static final int QSORT_STACK_SIZE = 1000;
+ 
+     /**
+      * Knuth's increments seem to work better than Incerpi-Sedgewick here.
+@@ -312,8 +312,7 @@
+     }
+ 
+     private static void hbMakeCodeLengths(final byte[] len, final int[] freq,
+-                                          final Data dat, final int alphaSize,
+-                                          final int maxLen) {
++                                          final Data dat, final int alphaSize) {
+         /*
+          * Nodes and heap entries run from 1. Entry 0 for both the heap and
+          * nodes is a sentinel.
+@@ -447,7 +446,7 @@
+                 }
+ 
+                 len[i - 1] = (byte) j;
+-                if (j > maxLen) {
++                if (j > 20) {
+                     tooLong = true;
+                 }
+             }
+@@ -672,8 +671,6 @@
+ 
+     private int runLength = 0;
+ 
+-    private int blockCRC;
+-
+     private int combinedCRC;
+ 
+     private int allowableBlockSize;
+@@ -820,9 +817,9 @@
+     }
+ 
+     private void endBlock() throws IOException {
+-        this.blockCRC = this.crc.getFinalCRC();
++        int blockCRC = this.crc.getFinalCRC();
+         this.combinedCRC = (this.combinedCRC << 1) | (this.combinedCRC >>> 31);
+-        this.combinedCRC ^= this.blockCRC;
++        this.combinedCRC ^= blockCRC;
+ 
+         // empty block at end of file
+         if (this.last == -1) {
+@@ -851,7 +848,7 @@
+         bsPutUByte(0x59);
+ 
+         /* Now the block's CRC, so it is in a known place. */
+-        bsPutInt(this.blockCRC);
++        bsPutInt(blockCRC);
+ 
+         /* Now a single bit indicating randomisation. */
+         if (this.blockRandomised) {
+@@ -890,7 +887,7 @@
+         super.finalize();
+     }
+ 
+-    public void finish() throws IOException {
++    private void finish() throws IOException {
+         if (out != null) {
+             try {
+                 if (this.runLength > 0) {
+@@ -1060,7 +1057,7 @@
+      * Method "mainQSort3", file "blocksort.c", BZip2 1.0.2
+      */
+     private void mainQSort3(final Data dataShadow, final int loSt,
+-                            final int hiSt, final int dSt) {
++                            final int hiSt) {
+         final int[] stack_ll = dataShadow.stack_ll;
+         final int[] stack_hh = dataShadow.stack_hh;
+         final int[] stack_dd = dataShadow.stack_dd;
+@@ -1069,7 +1066,7 @@
+ 
+         stack_ll[0] = loSt;
+         stack_hh[0] = hiSt;
+-        stack_dd[0] = dSt;
++        stack_dd[0] = 2;
+ 
+         for (int sp = 1; --sp >= 0;) {
+             final int lo = stack_ll[sp];
+@@ -1225,7 +1222,7 @@
+                         if (onceRunned) {
+                             fmap[j] = a;
+                             if ((j -= h) <= mj) {
+-                                break HAMMER;
++                                break;
+                             }
+                         } else {
+                             onceRunned = true;
+@@ -1244,7 +1241,7 @@
+                                         if (block[i1 + 5] == block[i2 + 5]) {
+                                             if (block[(i1 += 6)] == block[(i2 += 6)]) {
+                                                 int x = lastShadow;
+-                                                X: while (x > 0) {
++                                                while (x > 0) {
+                                                     x -= 4;
+ 
+                                                     if (block[i1 + 1] == block[i2 + 1]) {
+@@ -1262,7 +1259,6 @@
+                                                                                         i2 -= lastPlus1;
+                                                                                     }
+                                                                                     workDoneShadow++;
+-                                                                                    continue X;
+                                                                                 } else if ((quadrant[i1 + 3] > quadrant[i2 + 3])) {
+                                                                                     continue HAMMER;
+                                                                                 } else {
+@@ -1305,39 +1301,33 @@
+                                                     }
+ 
+                                                 }
+-                                                break HAMMER;
++                                                break;
+                                             } // while x > 0
+                                             else {
+                                                 if ((block[i1] & 0xff) > (block[i2] & 0xff)) {
+-                                                    continue HAMMER;
+                                                 } else {
+-                                                    break HAMMER;
++                                                    break;
+                                                 }
+                                             }
+                                         } else if ((block[i1 + 5] & 0xff) > (block[i2 + 5] & 0xff)) {
+-                                            continue HAMMER;
+                                         } else {
+-                                            break HAMMER;
++                                            break;
+                                         }
+                                     } else if ((block[i1 + 4] & 0xff) > (block[i2 + 4] & 0xff)) {
+-                                        continue HAMMER;
+                                     } else {
+-                                        break HAMMER;
++                                        break;
+                                     }
+                                 } else if ((block[i1 + 3] & 0xff) > (block[i2 + 3] & 0xff)) {
+-                                    continue HAMMER;
+                                 } else {
+-                                    break HAMMER;
++                                    break;
+                                 }
+                             } else if ((block[i1 + 2] & 0xff) > (block[i2 + 2] & 0xff)) {
+-                                continue HAMMER;
+                             } else {
+-                                break HAMMER;
++                                break;
+                             }
+                         } else if ((block[i1 + 1] & 0xff) > (block[i2 + 1] & 0xff)) {
+-                            continue HAMMER;
+                         } else {
+-                            break HAMMER;
++                            break;
+                         }
+ 
+                     } // HAMMER
+@@ -1460,7 +1450,7 @@
+                     final int lo = ftab_sb & CLEARMASK;
+                     final int hi = (ftab[sb + 1] & CLEARMASK) - 1;
+                     if (hi > lo) {
+-                        mainQSort3(dataShadow, lo, hi, 2);
++                        mainQSort3(dataShadow, lo, hi);
+                         if (firstAttemptShadow
+                             && (this.workDone > workLimitShadow)) {
+                             return;
+@@ -1597,7 +1587,7 @@
+         sendMTFValues6(nGroups, alphaSize);
+ 
+         /* And finally, the block data proper */
+-        sendMTFValues7(nSelectors);
++        sendMTFValues7();
+     }
+ 
+     private void sendMTFValues0(final int nGroups, final int alphaSize) {
+@@ -1746,7 +1736,7 @@
+              * Recompute the tables based on the accumulated frequencies.
+              */
+             for (int t = 0; t < nGroups; t++) {
+-                hbMakeCodeLengths(len[t], rfreq[t], this.data, alphaSize, 20);
++                hbMakeCodeLengths(len[t], rfreq[t], this.data, alphaSize);
+             }
+         }
+ 
+@@ -1950,7 +1940,7 @@
+         this.bsLive = bsLiveShadow;
+     }
+ 
+-    private void sendMTFValues7(final int nSelectors) throws IOException {
++    private void sendMTFValues7() throws IOException {
+         final Data dataShadow = this.data;
+         final byte[][] len = dataShadow.sendMTFValues_len;
+         final int[][] code = dataShadow.sendMTFValues_code;
+Index: cache/src/main/java/com/friz/cache/FileStore.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/FileStore.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/FileStore.java	(revision )
+@@ -17,19 +17,15 @@
+  */
+ package com.friz.cache;
+ 
+-import java.io.Closeable;
+-import java.io.File;
+-import java.io.FileNotFoundException;
+-import java.io.IOException;
+-import java.io.RandomAccessFile;
++import com.friz.cache.utility.FileChannelUtils;
++
++import java.io.*;
+ import java.nio.ByteBuffer;
+ import java.nio.channels.FileChannel;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+-import com.friz.cache.utility.FileChannelUtils;
+ 
+-
+ /**
+  * A file store holds multiple files inside a "virtual" file system made up of
+  * several index files and a single data file.
+@@ -46,7 +42,7 @@
+ 	 * files could not be found.
+ 	 */
+ 	@SuppressWarnings("resource")
+-	public static FileStore open(File root) throws FileNotFoundException {
++	private static FileStore open(File root) throws FileNotFoundException {
+ 		File data = new File(root, "main_file_cache.dat2");
+ 		if (!data.exists())
+ 			throw new FileNotFoundException("Cache data file not found.");
+@@ -75,21 +71,20 @@
+ 		raf = new RandomAccessFile(meta, "rw");
+ 		FileChannel metaChannel = raf.getChannel();
+ 
+-		return new FileStore(dataChannel, indexChannels.toArray(new FileChannel[0]), metaChannel);
++		return new FileStore(dataChannel, indexChannels.toArray(new FileChannel[indexChannels.size()]), metaChannel);
+ 	}
+ 
+ 	/**
+ 	 * Opens the file store stored in the specified directory.
+-	 * @param root The directory containing the index and data files.
+ 	 * @return The file store.
+ 	 * @throws FileNotFoundException if any of the {@code main_file_cache.*}
+ 	 * files could not be found.
+ 	 */
+-	public static FileStore open(String root) throws FileNotFoundException {
+-		return open(new File(root));
++	public static FileStore open() throws FileNotFoundException {
++		return open(new File(com.friz.network.Constants.CACHE_LOCATION));
+ 	}
+ 
+-	public static FileStore create(File root, int indexes) throws IOException {
++	private static FileStore create(File root, int indexes) throws IOException {
+ 		if (root.exists())
+ 			return open(root);
+ 
+@@ -138,7 +133,7 @@
+ 	 * @param indexes The index files.
+ 	 * @param meta The 'meta' index file.
+ 	 */
+-	public FileStore(FileChannel data, FileChannel[] indexes, FileChannel meta) {
++	private FileStore(FileChannel data, FileChannel[] indexes, FileChannel meta) {
+ 		this.dataChannel = data;
+ 		this.indexChannels = indexes;
+ 		this.metaChannel = meta;
+Index: update/src/main/java/com/friz/update/network/listeners/FileRequestEventListener.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/network/listeners/FileRequestEventListener.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/network/listeners/FileRequestEventListener.java	(revision )
+@@ -42,7 +42,7 @@
+ 				}
+ 				if (context.isIdle()) {
+ 					context.addContextToService();
+-					context.setIdle(false);
++					context.setIdle();
+ 				}
+ 			}
+ 		}
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/common/DecoderUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/common/DecoderUtil.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/common/DecoderUtil.java	(revision )
+@@ -9,28 +9,30 @@
+ 
+ package com.friz.cache.utility.tukaani.common;
+ 
+-import java.io.InputStream;
+-import java.io.IOException;
+-import java.io.EOFException;
+-import java.util.zip.CRC32;
+-
+ import com.friz.cache.utility.tukaani.CorruptedInputException;
+ import com.friz.cache.utility.tukaani.UnsupportedOptionsException;
+ import com.friz.cache.utility.tukaani.XZ;
+ import com.friz.cache.utility.tukaani.XZFormatException;
+ 
++import java.io.EOFException;
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.zip.CRC32;
++
+ public class DecoderUtil extends Util {
+-    public static boolean isCRC32Valid(byte[] buf, int off, int len,
++
++    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
++    public static boolean isCRC32Invalid(byte[] buf, int off, int len,
+-                                       int ref_off) {
++                                         int ref_off) {
+         CRC32 crc32 = new CRC32();
+         crc32.update(buf, off, len);
+         long value = crc32.getValue();
+ 
+         for (int i = 0; i < 4; ++i)
+             if ((byte)(value >>> (i * 8)) != buf[ref_off + i])
+-                return false;
+-
+-        return true;
++                return true;
++
++        return false;
+     }
+ 
+     public static StreamFlags decodeStreamHeader(byte[] buf)
+@@ -39,8 +41,8 @@
+             if (buf[i] != XZ.HEADER_MAGIC[i])
+                 throw new XZFormatException();
+ 
+-        if (!isCRC32Valid(buf, XZ.HEADER_MAGIC.length, 2,
++        if (isCRC32Invalid(buf, XZ.HEADER_MAGIC.length, 2,
+-                          XZ.HEADER_MAGIC.length + 2))
++                XZ.HEADER_MAGIC.length + 2))
+             throw new CorruptedInputException("XZ Stream Header is corrupt");
+ 
+         try {
+@@ -59,7 +61,7 @@
+             throw new CorruptedInputException("XZ Stream Footer is corrupt");
+         }
+ 
+-        if (!isCRC32Valid(buf, 4, 6, 0))
++        if (isCRC32Invalid(buf, 4, 6, 0))
+             throw new CorruptedInputException("XZ Stream Footer is corrupt");
+ 
+         StreamFlags streamFlags;
+Index: cache/src/main/java/com/friz/cache/tools/CacheVerifier.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/tools/CacheVerifier.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/tools/CacheVerifier.java	(revision )
+@@ -18,21 +18,20 @@
+ 
+ package com.friz.cache.tools;
+ 
+-import java.io.FileNotFoundException;
+-import java.io.IOException;
+-import java.nio.ByteBuffer;
+-import java.util.zip.CRC32;
+-
+ import com.friz.cache.Container;
+ import com.friz.cache.FileStore;
+ import com.friz.cache.ReferenceTable;
+ import com.friz.cache.ReferenceTable.Entry;
+-import com.friz.network.Constants;
+ 
+-public final class CacheVerifier {
++import java.io.FileNotFoundException;
++import java.io.IOException;
++import java.nio.ByteBuffer;
++import java.util.zip.CRC32;
+ 
++final class CacheVerifier {
++
+ 	public static void main(String[] args) {
+-		try (FileStore store = FileStore.open(Constants.CACHE_LOCATION)) {
++		try (FileStore store = FileStore.open()) {
+ 			for (int type = 0; type < store.getFileCount(255); type++) {
+ 				ReferenceTable table = ReferenceTable.decode(Container.decode(store.read(255, type)).getData());
+ 				for (int file = 0; file < table.capacity(); file++) {
+Index: game/src/main/java/com/friz/game/GameServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- game/src/main/java/com/friz/game/GameServer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ game/src/main/java/com/friz/game/GameServer.java	(revision )
+@@ -18,9 +18,12 @@
+ package com.friz.game;
+ 
+ import com.friz.cache.Cache;
++import com.friz.game.network.GameChannelHandler;
+ import com.friz.game.network.codec.LoginInitDecoder;
+ import com.friz.game.network.codec.LoginInitEncoder;
+ import com.friz.network.NetworkServer;
++import com.friz.network.SessionContext;
++import com.friz.network.event.EventHub;
+ import io.netty.bootstrap.ServerBootstrap;
+ import io.netty.channel.ChannelInitializer;
+ import io.netty.channel.ChannelOption;
+@@ -28,6 +31,7 @@
+ import io.netty.channel.nio.NioEventLoopGroup;
+ import io.netty.channel.socket.nio.NioServerSocketChannel;
+ import io.netty.channel.socket.nio.NioSocketChannel;
++import io.netty.util.AttributeKey;
+ 
+ import java.net.InetSocketAddress;
+ 
+@@ -37,6 +41,8 @@
+ public class GameServer extends NetworkServer {
+ 
+     private final Cache cache;
++    private final EventHub hub = new EventHub();
++    private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("game-attribute-key");
+ 
+     public GameServer(Cache c) {
+         this.cache = c;
+@@ -47,6 +53,8 @@
+         group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
+         bootstrap = new ServerBootstrap();
+ 
++        GameServer s = this;
++
+         bootstrap.group(group)
+                 .channel(NioServerSocketChannel.class)
+                 //.handler(new LoggingHandler(LogLevel.INFO))
+@@ -57,6 +65,7 @@
+                         ChannelPipeline p = ch.pipeline();
+                         p.addLast(LoginInitEncoder.class.getName(), new LoginInitEncoder());
+                         p.addLast(LoginInitDecoder.class.getName(), new LoginInitDecoder());
++                        p.addLast(GameChannelHandler.class.getName(), new GameChannelHandler(s));
+                     }
+ 
+                 })
+@@ -67,7 +76,7 @@
+     @Override
+     public void bind() {
+         try {
+-            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 40000)).sync();
++            future = bootstrap.bind(new InetSocketAddress("0.0.0.0", 40001)).sync();
+         } catch (InterruptedException e) {
+             e.printStackTrace();
+         }
+@@ -84,5 +93,13 @@
+ 
+     public final Cache getCache() {
+         return cache;
++    }
++
++    public EventHub getHub() {
++        return hub;
++    }
++
++    public AttributeKey<SessionContext> getAttr() {
++        return attr;
+     }
+ }
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- build.gradle	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ build.gradle	(revision )
+@@ -3,14 +3,12 @@
+ 
+ apply plugin: 'java'
+ 
+-sourceCompatibility = 1.8
+-
+ repositories {
+     mavenCentral()
+ }
+ 
+ dependencies {
+-    compile group: 'io.netty', name: 'netty-all', version: '4.0.31.Final'
+-    compile group: 'com.google.guava', name: 'guava', version: '18.0'
+-    testCompile group: 'junit', name: 'junit', version: '4.11'
++    compile group: 'io.netty', name: 'netty-all', version: '4.0.33.Final'
++    compile group: 'com.google.guava', name: 'guava', version: '19.0'
++    testCompile group: 'junit', name: 'junit', version: '4.12'
+ }
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/BCJDecoder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/BCJDecoder.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/BCJDecoder.java	(revision )
+@@ -9,10 +9,10 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.simple.*;
+ 
++import java.io.InputStream;
++
+ class BCJDecoder extends BCJCoder implements FilterDecoder {
+     private final long filterID;
+     private final int startOffset;
+@@ -44,17 +44,17 @@
+         SimpleFilter simpleFilter = null;
+ 
+         if (filterID == X86_FILTER_ID)
+-            simpleFilter = new X86(false, startOffset);
++            simpleFilter = new X86(startOffset);
+         else if (filterID == POWERPC_FILTER_ID)
+-            simpleFilter = new PowerPC(false, startOffset);
++            simpleFilter = new PowerPC(startOffset);
+         else if (filterID == IA64_FILTER_ID)
+-            simpleFilter = new IA64(false, startOffset);
++            simpleFilter = new IA64(startOffset);
+         else if (filterID == ARM_FILTER_ID)
+-            simpleFilter = new ARM(false, startOffset);
++            simpleFilter = new ARM(startOffset);
+         else if (filterID == ARMTHUMB_FILTER_ID)
+-            simpleFilter = new ARMThumb(false, startOffset);
++            simpleFilter = new ARMThumb(startOffset);
+         else if (filterID == SPARC_FILTER_ID)
+-            simpleFilter = new SPARC(false, startOffset);
++            simpleFilter = new SPARC(startOffset);
+         else
+             assert false;
+ 
+Index: cache/src/main/java/com/friz/cache/ReferenceTable.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/ReferenceTable.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/ReferenceTable.java	(revision )
+@@ -17,6 +17,9 @@
+  */
+ package com.friz.cache;
+ 
++import com.friz.cache.utility.ByteBufferUtils;
++import com.friz.cache.utility.crypto.BKDR;
++
+ import java.io.ByteArrayOutputStream;
+ import java.io.DataOutputStream;
+ import java.io.IOException;
+@@ -24,9 +27,6 @@
+ import java.util.SortedMap;
+ import java.util.TreeMap;
+ 
+-import com.friz.cache.utility.ByteBufferUtils;
+-import com.friz.cache.utility.crypto.BKDR;
+-
+ /**
+  * A {@link ReferenceTable} holds details for all the files with a single
+  * type, such as checksums, versions and archive members. There are also
+@@ -235,9 +235,8 @@
+ 		/**
+ 		 * Removes the entry with the specified id.
+ 		 * @param id The id.
+-		 * @param entry The entry.
+ 		 */
+-		public void removeEntry(int id, ChildEntry entry) {
++		public void removeEntry(int id) {
+ 			entries.remove(id);
+ 		}
+ 
+Index: network/src/main/java/com/friz/network/utility/BufferUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- network/src/main/java/com/friz/network/utility/BufferUtils.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ network/src/main/java/com/friz/network/utility/BufferUtils.java	(revision )
+@@ -19,7 +19,6 @@
+ package com.friz.network.utility;
+ 
+ import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.Unpooled;
+ 
+ import java.nio.ByteBuffer;
+ 
+@@ -35,7 +34,7 @@
+ 	 */
+ 	public static void put5ByteInteger(ByteBuf buf, long value) {
+ 		buf.writeByte((int) (value >> 32));
+-		buf.writeInt((int) (value & 0xffffffff));
++		buf.writeInt((int) value);
+ 	}
+ 
+     /**
+@@ -45,7 +44,7 @@
+      */
+     public static void put6ByteInteger(ByteBuf buf, long value) {
+         buf.writeShort((int) (value >> 32));
+-        buf.writeInt((int) (value & 0xffffffff));
++        buf.writeInt((int) value);
+     }
+ 	
+ 	/**
+@@ -184,7 +183,7 @@
+      * @return The decoded value.
+      */
+     public static int getInt(int index, byte[] buffer) {
+-        return ((buffer[index++] & 0xff) << 24) | ((buffer[index++] & 0xff) << 16) | ((buffer[index++] & 0xff) << 8) | (buffer[index++] & 0xff);
++        return ((buffer[index++] & 0xff) << 24) | ((buffer[index++] & 0xff) << 16) | ((buffer[index++] & 0xff) << 8) | (buffer[index] & 0xff);
+     }
+ 
+     /**
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/LZMAInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/LZMAInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/LZMAInputStream.java	(revision )
+@@ -10,15 +10,14 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.EOFException;
+-import java.io.InputStream;
+-
+ import com.friz.cache.utility.tukaani.lz.LZDecoder;
+ import com.friz.cache.utility.tukaani.lzma.LZMADecoder;
+ import com.friz.cache.utility.tukaani.rangecoder.RangeDecoderFromStream;
+ 
+ import java.io.DataInputStream;
++import java.io.EOFException;
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Decompresses legacy .lzma files and raw LZMA streams (no .lzma header).
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/SeekableInputStream.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/SeekableInputStream.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/SeekableInputStream.java	(revision )
+@@ -9,8 +9,8 @@
+ 
+ package com.friz.cache.utility.tukaani;
+ 
+-import java.io.InputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ 
+ /**
+  * Input stream with random access support.
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/index/BlockInfo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/index/BlockInfo.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/index/BlockInfo.java	(revision )
+@@ -9,7 +9,7 @@
+ 
+ package com.friz.cache.utility.tukaani.index;
+ 
+-public class BlockInfo {
++class BlockInfo {
+     public int blockNumber = -1;
+     public long compressedOffset = -1;
+     public long uncompressedOffset = -1;
+Index: cache/src/main/java/com/friz/cache/Index.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/Index.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/Index.java	(revision )
+@@ -17,9 +17,9 @@
+  */
+ package com.friz.cache;
+ 
+-import java.nio.ByteBuffer;
+-
+ import com.friz.cache.utility.ByteBufferUtils;
++
++import java.nio.ByteBuffer;
+ 
+ 
+ /**
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(revision )
++++ .idea/vcs.xml	(revision )
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="" />
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: cache/src/main/java/com/friz/cache/Sector.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/Sector.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/Sector.java	(revision )
+@@ -17,9 +17,9 @@
+  */
+ package com.friz.cache;
+ 
+-import java.nio.ByteBuffer;
+-
+ import com.friz.cache.utility.ByteBufferUtils;
++
++import java.nio.ByteBuffer;
+ 
+ /**
+  * @author Graham
+Index: update/src/main/java/com/friz/update/UpdateServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- update/src/main/java/com/friz/update/UpdateServer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ update/src/main/java/com/friz/update/UpdateServer.java	(revision )
+@@ -22,13 +22,14 @@
+ import com.friz.network.SessionContext;
+ import com.friz.network.event.EventHub;
+ import com.friz.update.network.UpdateChannelHandler;
+-import com.friz.update.network.codec.*;
++import com.friz.update.network.codec.UpdateInitDecoder;
++import com.friz.update.network.codec.UpdateInitEncoder;
+ import com.friz.update.network.events.FileRequestEvent;
+-import com.friz.update.network.events.XorRequestEvent;
+ import com.friz.update.network.events.UpdateRequestEvent;
+-import com.friz.update.network.listeners.XorRequestEventListener;
++import com.friz.update.network.events.XorRequestEvent;
+ import com.friz.update.network.listeners.FileRequestEventListener;
+ import com.friz.update.network.listeners.UpdateRequestEventListener;
++import com.friz.update.network.listeners.XorRequestEventListener;
+ import io.netty.bootstrap.ServerBootstrap;
+ import io.netty.channel.ChannelInitializer;
+ import io.netty.channel.ChannelOption;
+@@ -36,8 +37,6 @@
+ import io.netty.channel.nio.NioEventLoopGroup;
+ import io.netty.channel.socket.nio.NioServerSocketChannel;
+ import io.netty.channel.socket.nio.NioSocketChannel;
+-import io.netty.handler.logging.LogLevel;
+-import io.netty.handler.logging.LoggingHandler;
+ import io.netty.handler.timeout.IdleStateHandler;
+ import io.netty.util.AttributeKey;
+ 
+@@ -66,7 +65,7 @@
+ 
+         bootstrap.group(group)
+                 .channel(NioServerSocketChannel.class)
+-                .handler(new LoggingHandler(LogLevel.INFO))
++                //.handler(new LoggingHandler(LogLevel.INFO))
+                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
+ 
+                     @Override
+Index: cache/src/main/java/com/friz/cache/utility/tukaani/simple/SPARC.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- cache/src/main/java/com/friz/cache/utility/tukaani/simple/SPARC.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ cache/src/main/java/com/friz/cache/utility/tukaani/simple/SPARC.java	(revision )
+@@ -14,8 +14,8 @@
+     private final boolean isEncoder;
+     private int pos;
+ 
+-    public SPARC(boolean isEncoder, int startPos) {
+-        this.isEncoder = isEncoder;
++    public SPARC(int startPos) {
++        this.isEncoder = false;
+         pos = startPos;
+     }
+ 
+Index: master/src/main/java/com/friz/master/MasterServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- master/src/main/java/com/friz/master/MasterServer.java	(revision a8010cd6daea976c69ddcb5a2c8d12e3d8f10495)
++++ master/src/main/java/com/friz/master/MasterServer.java	(revision )
+@@ -22,8 +22,8 @@
+ import com.friz.cache.Cache;
+ import com.friz.cache.FileStore;
+ import com.friz.game.GameServer;
++import com.friz.lobby.LobbyServer;
+ import com.friz.login.LoginServer;
+-import com.friz.network.Constants;
+ import com.friz.update.UpdateServer;
+ 
+ import java.io.IOException;
+@@ -34,44 +34,51 @@
+ public class MasterServer {
+ 
+     public static void main(String[] args) throws Exception {
+-        Cache c = new Cache(FileStore.open(Constants.CACHE_LOCATION));
+-        c.initialize();
+-        System.out.println("Cache Initialized " + c.getTypeCount() + " Index(es)");
++        Cache cache = new Cache(FileStore.open());
++        cache.initialize();
++        System.out.println("Cache Initialized " + cache.getTypeCount() + " Index(es)");
+ 
+-        UpdateServer u = new UpdateServer(c);
+-        u.initialize();
+-        u.bind();
+-        System.out.println("UpdateServer initialized on: " + u.getAddress());
++        UpdateServer update = new UpdateServer(cache);
++        update.initialize();
++        update.bind();
++        System.out.println("UpdateServer initialized on: " + update.getAddress());
+ 
+-        AudioServer a = new AudioServer(c);
+-        a.initialize();
+-        a.bind();
+-        System.out.println("AudioServer initialized on: " + a.getAddress());
++        AudioServer audio = new AudioServer(cache);
++        audio.initialize();
++        audio.bind();
++        System.out.println("AudioServer initialized on: " + audio.getAddress());
+ 
+-        LoginServer l = new LoginServer();
+-      //  l.initialize();
+-      //  l.bind();
+-      //  System.out.println("LoginServer initialized on: " + l.getAddress());
++        LoginServer login = new LoginServer();
++        login.initialize();
++        login.bind();
++        System.out.println("LoginServer initialized on: " + login.getAddress());
+ 
+-        GameServer g = new GameServer(c);
+-      //  g.initialize();
+-      //  g.bind();
+-      //  System.out.println("GameServer initialized on: " + g.getAddress());
++        LobbyServer lobby = new LobbyServer(cache);
++        lobby.initialize();
++        lobby.bind();
++        System.out.println("LobbyServer initialized on: " + lobby.getAddress());
+ 
++        GameServer game = new GameServer(cache);
++        game.initialize();
++        game.bind();
++        System.out.println("GameServer initialized on: " + game.getAddress());
++
+         Runtime.getRuntime().addShutdownHook(new Thread() {
+ 
+             @Override
+             public void run() {
+                 System.out.println("hook");
+                 try {
+-                    c.close();
++                    cache.close();
+                 } catch (IOException e) {
+                     e.printStackTrace();
++                } finally {
++                    update.stop();
++                    audio.stop();
++                    login.stop();
++                    lobby.stop();
++                    game.stop();
+                 }
+-                u.stop();
+-                a.stop();
+-                l.stop();
+-                g.stop();
+             }
+ 
+         });

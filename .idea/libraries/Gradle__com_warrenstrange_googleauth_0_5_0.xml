@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.warrenstrange:googleauth:0.5.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.warrenstrange/googleauth/0.5.0/b305294e6658ce16026047b1a28da566f17b1f98/googleauth-0.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.warrenstrange/googleauth/0.5.0/f9e593690bd7dca5688feb1c49d20e75b1eabb14/googleauth-0.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
