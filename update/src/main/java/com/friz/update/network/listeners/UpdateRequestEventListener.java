@@ -31,7 +31,7 @@ public final class UpdateRequestEventListener implements EventListener<UpdateReq
 
 	@Override
 	public void onEvent(UpdateRequestEvent version, UpdateSessionContext context) {
-		if (version.getVersion() == 863) {
+		if (version.getVersion() == 865) {
 			context.writeSuccess(UpdateResponseEvent.STATUS_OK);
 		} else {
 			context.writeFailure(UpdateResponseEvent.STATUS_OUT_OF_DATE);

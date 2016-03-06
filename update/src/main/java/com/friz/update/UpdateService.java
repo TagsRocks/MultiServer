@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UpdateService extends AbstractService implements Runnable {
 
     /**
-     * THe {@link java.util.concurrent.ExecutorService} set with the amount of available processors the computer has.
+     * The {@link java.util.concurrent.ExecutorService} set with the amount of available processors the computer has.
      */
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
