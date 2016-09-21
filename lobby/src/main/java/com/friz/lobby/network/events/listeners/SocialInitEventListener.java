@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.friz.lobby.network.listeners;
+package com.friz.lobby.network.events.listeners;
 
 import com.friz.lobby.network.LobbySessionContext;
 import com.friz.lobby.network.codec.*;

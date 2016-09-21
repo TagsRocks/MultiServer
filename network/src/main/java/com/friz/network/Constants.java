@@ -25,6 +25,10 @@ import java.math.BigInteger;
  */
 public final class Constants {
 
+    public static final int MAJOR = 865;
+
+    public static final int MINOR = 1;
+
     public static final String CACHE_LOCATION = System.getProperty("user.home") + "/Desktop/rscd/data865/";
 
     /**

@@ -23,13 +23,20 @@ import com.friz.lobby.network.codec.LobbyInitDecoder;
 import com.friz.lobby.network.codec.LobbyInitEncoder;
 import com.friz.lobby.network.events.CreationRequestEvent;
 import com.friz.lobby.network.events.LobbyInitRequestEvent;
+import com.friz.lobby.network.events.LoginRequestEvent;
 import com.friz.lobby.network.events.SocialInitRequestEvent;
-import com.friz.lobby.network.listeners.CreationEventListener;
-import com.friz.lobby.network.listeners.LobbyInitEventListener;
-import com.friz.lobby.network.listeners.SocialInitEventListener;
+import com.friz.lobby.network.events.listeners.CreationEventListener;
+import com.friz.lobby.network.events.listeners.LobbyInitEventListener;
+import com.friz.lobby.network.events.listeners.LoginRequestEventListener;
+import com.friz.lobby.network.events.listeners.SocialInitEventListener;
 import com.friz.network.NetworkServer;
 import com.friz.network.SessionContext;
 import com.friz.network.event.EventHub;
+import com.friz.network.module.ModuleHub;
+import com.friz.lobby.network.modules.ClientTypeModule;
+import com.friz.lobby.network.modules.listeners.ClientTypeModuleListener;
+import com.friz.lobby.network.modules.ClientVersionModule;
+import com.friz.lobby.network.modules.listeners.ClientVersionModuleListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -42,7 +49,6 @@ import io.netty.util.AttributeKey;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -53,7 +59,8 @@ public class LobbyServer extends NetworkServer {
 
     private final Cache cache;
 
-    private final EventHub hub = new EventHub();
+    private final EventHub eventHub = new EventHub();
+    private final ModuleHub moduleHub = new ModuleHub();
     private final AttributeKey<SessionContext> attr = AttributeKey.valueOf("lobby-attribute-key");
 
     private final ConcurrentMap<Integer, Channel> channels = new ConcurrentHashMap<>();
@@ -86,9 +93,13 @@ public class LobbyServer extends NetworkServer {
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.TCP_NODELAY, true);
 
-        hub.listen(LobbyInitRequestEvent.class, new LobbyInitEventListener());
-        hub.listen(SocialInitRequestEvent.class, new SocialInitEventListener());
-        hub.listen(CreationRequestEvent.class, new CreationEventListener());
+        eventHub.listen(LobbyInitRequestEvent.class, new LobbyInitEventListener());
+        eventHub.listen(SocialInitRequestEvent.class, new SocialInitEventListener());
+        eventHub.listen(CreationRequestEvent.class, new CreationEventListener());
+        eventHub.listen(LoginRequestEvent.class, new LoginRequestEventListener());
+
+        moduleHub.listen(ClientVersionModule.class, new ClientVersionModuleListener());
+        moduleHub.listen(ClientTypeModule.class, new ClientTypeModuleListener());
     }
 
     @Override
@@ -113,9 +124,11 @@ public class LobbyServer extends NetworkServer {
         return cache;
     }
 
-    public final EventHub getHub() {
-        return hub;
+    public final EventHub getEventHub() {
+        return eventHub;
     }
+
+    public final ModuleHub getModuleHub() { return moduleHub; }
 
     public final AttributeKey<SessionContext> getAttr() {
         return attr;

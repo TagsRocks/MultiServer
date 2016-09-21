@@ -18,7 +18,11 @@
 
 package com.friz.lobby.network.codec;
 
+import com.friz.lobby.network.events.LoginRequestEvent;
 import com.friz.network.Constants;
+import com.friz.network.module.Module;
+import com.friz.lobby.network.modules.ClientTypeModule;
+import com.friz.lobby.network.modules.ClientVersionModule;
 import com.friz.network.utility.BufferUtils;
 import com.friz.network.utility.XTEA;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -28,6 +32,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -189,6 +194,10 @@ public class LoginDecoder extends ByteToMessageDecoder {
             else
                 checksums[i] = xteaBuf.readInt();
         }
-        ctx.channel().writeAndFlush(Unpooled.buffer().writeByte(56));
+
+        final List<Module> modules = new ArrayList<>();
+        modules.add(new ClientVersionModule(major, minor));
+        modules.add(new ClientTypeModule(game, lang, display, width, height));
+        out.add(new LoginRequestEvent(modules));
     }
 }

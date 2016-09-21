@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MultiServer.iml" filepath="$PROJECT_DIR$/MultiServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MultiServer.iml" filepath="$PROJECT_DIR$/.idea/modules/MultiServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MultiServer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MultiServer_main.iml" group="MultiServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MultiServer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MultiServer_test.iml" group="MultiServer" />
     </modules>
   </component>
 </project>

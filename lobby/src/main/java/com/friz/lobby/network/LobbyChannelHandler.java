@@ -49,7 +49,7 @@ public class LobbyChannelHandler extends SimpleChannelInboundHandler<Event> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Event msg) throws Exception {
-        server.getHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
+        server.getEventHub().onLink(new EventLink(msg, ctx.channel().attr(server.getAttr()).get()));
     }
 
     @Override
